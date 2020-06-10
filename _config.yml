@@ -119,8 +119,8 @@ jsonContent:
 
 #valine评论
 valine:
-  API_ID: ''
-  API_KEY: ''
+  API_ID: 'nr42vxAz3QQouMN3Ajh6FG93-gzGzoHsz'
+  API_KEY: 'JQCnuSnFEctiJezljTgAgRIz'
 
 
 #rss
@@ -138,6 +138,6 @@ feed:
 
 #百度统计
 baidu_tongji:
-  site_from: '2019/7/26'
-  site_id: ''
-  access_token: ''
+  site_from: '2020/06/08'
+  site_id: '20322847'
+  access_token: '121.cc35f58701595e83d50b3e7fcd0cda17.Y_ySS7w9n_dXvvPXP9ZwFYXJW2yGK8vEF92FbHe.l_N36g'
