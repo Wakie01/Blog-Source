@@ -631,7 +631,7 @@ require([
       visitor: true,
       recordIP: true,
       avatar: 'mp',
-      placeholder: '骑士很煎蛋、骑士很孜然'
+      placeholder: 'Leave a comment'
     })
   }
 
