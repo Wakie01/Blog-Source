@@ -1,5 +1,6 @@
 ---
 title: Hello World
+date: 2020-06-09
 tags: Hexo
 categories: Hexo
 comments: true
