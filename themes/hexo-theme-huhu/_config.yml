@@ -97,3 +97,8 @@ friends:
     url: 'https://www.google.com/'
     logo: 'https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1591723616171&di=79633c9d700d266dbf393086d7d4290e&imgtype=0&src=http%3A%2F%2Fbpic.588ku.com%2Felement_origin_min_pic%2F00%2F89%2F91%2F4456ee878f9811a.jpg'
     intro: ''
+  - name: Utone
+    time: '2020-07-24'
+    url: 'https://blog.utone.xyz/'
+    logo: 'https://blog.utone.xyz/images/logo.jpeg'
+    intro: ''

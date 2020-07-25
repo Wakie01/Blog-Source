@@ -69,11 +69,18 @@ android:networkSecurityConfig="@xml/network_security_config"
 - 其它解决方法：Android版本降级、修改服务端，将http协议转换为https协议
 
 
+
 ### 打包APK
 
 用Android Studio打开 `项目名/platforms/android` 的文件夹
 
 在gradle sync提示框中点击OK
+
+> - 问题：有时会出现gradle sync失败 <br/>
+> - 解决方法：修改`build.gradle`文件中的gradle版本为当前android studio所使用的gradle版本，比如我android studio使用的gradle版本是4.0.0
+
+![img1](./Ionic4打包成APK/1.png)
+
 
 需要改应用名称时，可打开`res/values/string.xml`文件对`app_name`处进行修改
 
