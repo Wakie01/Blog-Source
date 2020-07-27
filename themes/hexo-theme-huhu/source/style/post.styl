@@ -1,6 +1,6 @@
 
 color-border = #ddd
-line-height = 1.5rem
+line-height = 1.70rem
 
 .post-entry {
   width: 100%
@@ -218,7 +218,7 @@ line-height = 1.5rem
   }
 
   pre, code {
-    font-size: 0.75rem
+    font-size: 0.85rem
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace
   }
 
@@ -232,12 +232,38 @@ line-height = 1.5rem
   }
 
   p, table {
-    font-size: 0.875rem // 正文14px
+    font-size: 15.5px // 正文14px
     line-height: line-height
   }
 
   p {
-    margin: 0.5rem 0
+    margin: 0.60rem 0
+  }
+
+  .highlight{
+
+    table{
+      width: 100%
+      margin: 0.5rem 0
+      border-collapse: collapse
+      border-spacing: 0
+    }
+
+    th {
+      font-weight: bold
+      border-bottom: 3px solid color-border
+      padding-bottom: 0.5em
+    }
+
+    tr{
+      border: 0
+    }
+
+    td {
+      padding: 10px 0
+      border: 0
+    }
+
   }
 
 
@@ -371,6 +397,7 @@ line-height = 1.5rem
   }
 
   hr {
+    margin: 10px 0
     border: 1px dashed color-border
   }
 
@@ -469,7 +496,7 @@ line-height = 1.5rem
     }
 
     > ol, ul > a {
-      margin-top: 0.3rem
+      margin-top: 0.4rem
     }
   }
 
@@ -480,7 +507,7 @@ line-height = 1.5rem
   }
 
   ul, ol, dl {
-    margin: 0.4rem 1rem
+    margin: 1rem 1rem
     list-style-type: none
   }
 
@@ -490,4 +517,11 @@ line-height = 1.5rem
       margin-bottom: 0
     }
   }
+
+  li {
+    margin-bottom: 0.4rem
+  }
+
 }
+
+
