@@ -69,7 +69,7 @@ SSH只是一种协议，有多种实现，商业的，开源的。
 
 ## 区别SSH框架
 
-与SSH协议同缩写的还有一个是SSH框架，难怪我觉得乱！SSH框架是指：<b><i>Struts+Spring+Hibernate</i></b>，不过现在新开发的网页中基本没什么人用SSH框架了
+与SSH协议同缩写的还有一个是SSH框架，难怪我觉得乱！SSH框架是指：**Struts+Spring+Hibernate**，不过现在新开发的网页中基本没什么人用SSH框架了
 
 <br/>
 
