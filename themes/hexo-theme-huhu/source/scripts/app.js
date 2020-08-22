@@ -37,7 +37,7 @@ require([
       visitor: true,
       recordIP: true,
       avatar: 'mp',
-      placeholder: 'Leave a comment'
+      placeholder: '若有错误之处，敬请指正'
     })
   }
 
