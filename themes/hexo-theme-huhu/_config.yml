@@ -102,3 +102,7 @@ friends:
     url: 'https://blog.utone.xyz/'
     logo: 'https://blog.utone.xyz/images/logo.jpeg'
     intro: ''
+
+
+mathjax:
+  enable: true
