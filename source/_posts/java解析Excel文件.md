@@ -1,5 +1,5 @@
 ---
-title: java解析Excel文件
+title: java解析和编辑Excel文件
 comment: true
 date: 2020-08-21 22:40:25
 tags: Java
@@ -184,8 +184,137 @@ public List importExcel2(@RequestParam("excelFile") MultipartFile excelFile){
 </div>
 
 
+
+## 编辑Excel表
+
+最近要弄一个这样的东西，在这个表中插入几百条随机数据，怎么弄呢？
+
+![img6](D:\blog\source\_posts\java解析Excel文件\6.png)
+
+```java
+public void createRandomExcel2(@RequestParam("excelFile") MultipartFile excelFile){
+        try {
+            InputStream inputStream=excelFile.getInputStream();
+
+            //根据inputStream的类型自动建立 HSSFWorkbook 或 XSSFWorkbook的 Workbook对象
+            //其中HSSFWorkbook用来解析xls格式的excel，XSSFWorkbook用来解析xlsx格式的excel
+            Workbook workbook= WorkbookFactory.create(inputStream);
+
+            Sheet sheet=workbook.getSheetAt(0);   //获取表格对象
+            int rowNum=sheet.getPhysicalNumberOfRows();    //获取表格行数
+            int colNum=sheet.getRow(3).getPhysicalNumberOfCells();      //获取表格第一行的列数
+
+            for(int i=4;i<rowNum;i++){       //从第5行开始插入
+                Row row=sheet.getRow(i);     
+                for(int j=0;j<colNum;j++){
+                    switch (j){
+                        case 0:{
+                            row.getCell(j).setCellValue("海原站-彭阳站");
+                            break;
+                        }
+                        case 1:{
+                            row.getCell(j).setCellValue(new BigDecimal(Math.random()*5000).setScale(0,RoundingMode.DOWN).intValue());
+                            break;
+                        }
+                        case 4:{
+                            String[] types={"-","杂散电流干扰"};
+
+                            if(Math.random()*10<7.5){
+                                row.getCell(j++).setCellValue(types[0]);
+                                row.getCell(j).setCellValue("-");
+                            }else{
+                                row.getCell(j++).setCellValue(types[1]);
+                                row.getCell(j).setCellValue("土壤酸碱性");
+                            }
+
+                            break;
+                        }
+                        case 6:{
+                            int hh1=new Double(Math.random()*24).intValue();
+                            int mm1=new Double(Math.random()*60).intValue();
+                            int interval;
+                            int repeatTime=1;
+                            while(true){
+                                interval=new Double(Math.random()*60).intValue();
+                                if(mm1+interval<60){
+                                    break;
+                                }
+                                if(repeatTime>10){
+                                    mm1=new Double(Math.random()*60).intValue();
+                                    repeatTime=1;
+                                }
+                            }
+                            String hour1=hh1<10? "0"+hh1:""+hh1;
+                            String minute1=mm1<10? "0"+mm1:""+mm1;
+                            row.getCell(j++).setCellValue(hour1+":"+minute1);
+
+                            minute1=(mm1+interval)<10? "0"+(mm1+interval):""+(mm1+interval);
+                            row.getCell(j++).setCellValue(hour1+":"+minute1);
+                            row.getCell(j).setCellValue(interval);
+                            break;
+                        }
+                        case 10:{
+                            double num1=new BigDecimal(Math.random()*100).setScale(2,RoundingMode.DOWN).doubleValue();
+                            double num2=new BigDecimal(Math.random()*(100-num1)).setScale(2,RoundingMode.DOWN).doubleValue();
+                            double num3=new BigDecimal(Math.random()*(100-num1-num2)).setScale(2,RoundingMode.DOWN).doubleValue();
+                            double num4=100-num1-num2-num3;
+                            row.getCell(j++).setCellValue(num1);
+                            row.getCell(j++).setCellValue(num2);
+                            row.getCell(j++).setCellValue(num3);
+                            row.getCell(j).setCellValue(num4);
+                            break;
+                        }
+                        case 14:{
+                            String[] strs={"强","中","弱"};
+                            row.getCell(j).setCellValue(strs[new BigDecimal(Math.random()*3).setScale(0,RoundingMode.DOWN).intValue()]);
+                            break;
+                        }
+                        case 15:{
+                            String[] strs={"好","较好","一般","较差","差"};
+                            row.getCell(j).setCellValue(strs[new BigDecimal(Math.random()*5).setScale(0,RoundingMode.DOWN).intValue()]);
+                            break;
+                        }
+                        case 16:{
+                            row.getCell(j).setCellValue("暂无");
+                            break;
+                        }
+                        case 17:{
+                            String month;
+                            String day;
+                            int MM=new BigDecimal(Math.random()*10).setScale(0,RoundingMode.HALF_DOWN).intValue();
+                            int dd=new BigDecimal(Math.random()*30).setScale(0,RoundingMode.HALF_DOWN).intValue();
+                            month=MM<10? "0"+MM:""+MM;
+                            day=dd<10? "0"+dd:""+dd;
+                            row.getCell(j).setCellValue("2020"+month+day);
+                            break;
+                        }
+                        case 18:
+                        case 19:
+                        case 20:
+                        case 21:{
+                            row.getCell(j).setCellValue("-");
+                            break;
+                        }
+
+
+                    }
+
+                }
+            }
+            //写入文件
+            OutputStream fileOut=new FileOutputStream("C:/Users/15513/Desktop/直流.xlsx");
+            workbook.write(fileOut);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+}
+```
+
+
+
 <br/>
 
 <br/>
 
 站在巨人的肩膀上
+
