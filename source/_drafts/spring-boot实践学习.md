@@ -166,6 +166,28 @@ pom.xml文件：
 
 
 
+## @Component
+
+**作用：**
+
+它是一个通用的构造型注解，表明该类是一个spring组件
+
+**使用：**
+
+在类名前使用
+
+## @Repository
+
+**作用：**
+
+它也是表明该类是一个spring组件，同时，它也表明该类定义了一个数据存储库，即DAO层的注解
+
+## @Service
+
+**作用：**
+
+表明该类是一个spring组件，用于标注服务层组件
+
 ## @Data
 
 **引入**
@@ -210,6 +232,67 @@ pom.xml文件：
 **作用：**
 
 自动生成实体类的全参构造函数，各个参数按顺序对应
+
+
+
+## @ResponseBody
+
+**作用：**
+
+表示后端以json格式来返回数据
+
+**用法：**
+
+用在Controller类名前或Controller类的方法前
+
+##  @RequestBody
+
+**作用：**
+
+表示请求参数以json格式来提交，即前端传给后端的数据要以json的格式
+
+**用法：**
+
+用在Controller类的方法的参数中，比如：
+
+```java
+@RestController
+public class UserController {
+    @PostMapping("/controllerTest")
+    public String controllerTest(@RequestBody String hello){
+        return hello;
+    }
+}
+```
+
+## @RequestParam
+
+**作用：**
+
+表示请求参数以formData的形式来提交，即前端传给后端的数据要以key-value的格式
+
+**用法：**
+
+@RequestParam常用参数：
+
+- name：表示formdata的key值
+- required：表示该formdata是否必须，默认true
+- defaultValue：表示该formdata非必须，并设置默认值
+
+```java
+//这样默认指name
+@PostMapping("/controllerTest")
+public String controllerTest(@RequestParam("word") String hello){
+    return hello;
+}
+
+@PostMapping("/controllerTest")
+public String controllerTest(@RequestParam(name="word",defaultValue = "no word") String hello){
+    return hello;
+}
+```
+
+
 
 ## @Controller
 
@@ -274,4 +357,65 @@ public class HomeServiceImpl implements HomeService {
 
 
 ## @RestController
+
+现在大部分都是前后端分离，后端给前端返回的一般都是数据，比如json数据
+
+若硬要用@Controller，则要在类前或某个方法前加个@ResponseBody，如：
+
+```java
+@Controller
+public class UserController {
+    @ResponseBody
+ 	@PostMapping("/controllerTest")
+    public String controllerTest(@RequestParam("hello") String hello){
+        return hello;
+    }   
+}
+
+//或者
+@ResponseBody
+@Controller
+public class UserController {
+ 	@PostMapping("/controllerTest")
+    public String controllerTest(@RequestParam("hello") String hello){
+        return hello;
+    }   
+}
+```
+
+为了方便点，出现了@RestController
+
+@RestController是@Controller与@ResponseBody的结合体
+
+**使用：**
+
+```java
+@RestController
+public class UserController {
+    @PostMapping("/controllerTest")
+    public String controllerTest(@RequestParam("hello") String hello){
+        return hello;
+    }  
+}
+```
+
+## @GetMapping
+
+**作用：**
+
+
+
+**使用：**
+
+
+
+##  @PostMapping
+
+**作用：**
+
+
+
+**使用：**
+
+
 
