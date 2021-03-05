@@ -26,7 +26,7 @@ Spring boot特点：
 3. 默认只有一个.properties的配置文件，不推荐使用xml，后期会采用.java的文件去编写配置信息
 4. 项目在部署时，采用的是jar包的方式，内部自动依赖Tomcat容器，提供了多环境的配置
 
-
+其实，Spring boot之所以简单，总的来说是因为**`约定大于配置`**
 
 # 快速创建项目
 
@@ -97,7 +97,8 @@ pom.xml文件：
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <!-- 指定了一个父工程-->
+    <!-- 指定了一个父工程，继承spring-boot-starter-parent的依赖管理，控制版本与打包等内容-->
+    <!-- 可以默认指定子工程所引用的jar包的版本 -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -119,11 +120,13 @@ pom.xml文件：
     
     <!-- 导入依赖 -->
     <dependencies>
+        <!-- spring boot web 依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
+        
+		 <!-- spring boot 单元测试依赖 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -139,6 +142,7 @@ pom.xml文件：
 
     <build>
         <plugins>
+             <!-- 打jar包依赖 -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -149,6 +153,14 @@ pom.xml文件：
 </project>
 
 ```
+
+除此之外，还可添加以下常用依赖：
+
+
+
+
+
+
 
 ### .gitignore文件
 
@@ -203,7 +215,7 @@ pom.xml文件：
 
 可见，我这里没用标注lombok的版本，因为Spring boot中已经帮我们指定了lombok的版本
 
-![img9](D:\blog\source\_drafts\spring-boot实践学习\9.png)
+![img9](./spring-boot实践学习/9.png)
 
 
 
@@ -316,7 +328,7 @@ public class UserController {
 
 当我这么访问这个接口时，报404错误：
 
-![img10](D:\blog\source\_drafts\spring-boot实践学习\10.png)
+![img10](./spring-boot实践学习/10.png)
 
 因为它要返回的是一个页面，然后spring boot找不到这个页面，所以报404错误。
 
