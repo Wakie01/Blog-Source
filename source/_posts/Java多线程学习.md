@@ -33,10 +33,15 @@ addrlink: 1130
 值得注意的是：
 
 - 线程是独立的执行路径
+
 - 在程序运行时，即使自己没有创建线程，后台也会有多个线程，如main()主线程，垃圾回收线程（gc线程）
+
 - 在一个进程中，若开辟了多个线程，线程的运行由调度器安排调度，调度器是与OS紧密相关的，先后顺序不能人为干预
+
 - 对同一份资源操作时，会存在资源抢夺的问题，so需要加入并发控制
+
 - 线程会带来额外的开销，如cpu调度时间，并发控制开销
+
 - 每个线程在自己的工作内存中交互，内存控制不当会造成数据不一致
 
 # 常见线程名词
@@ -76,7 +81,9 @@ addrlink: 1130
 Java实现多线程，常用的有两种方法：
 
 1. 继承Thread类
+
 2. 实现Runnable接口
+
 3. 实现Callable接口
 
 两者对比，第二种方法更常用
@@ -323,8 +330,11 @@ public class TestThread5 implements Runnable{
 实现Runnable的优势：
 
 1. 适合多个相同的程序代码的线程去处理同一个资源（还没体会到）
+
 2. 可避免Java中单继承的限制
+
 3. 增加程序的健壮性，代码可被多个线程共享，代码和数据独立（也还没体会到）
+
 4. 线程池只能放入实现Runnable或Callable类的线程，不能直接放入继承Thread的类
 
 **例子：**
@@ -359,7 +369,7 @@ public class TestThread4 implements Runnable{
 
 **输出：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\13.png" alt="image-20210212234251178" style="zoom:80%;" />
+<img src=".\Java多线程学习\13.png" alt="image-20210212234251178" style="zoom:80%;" />
 
 
 
@@ -450,7 +460,7 @@ public class TestThread6 implements Callable<Boolean> {
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\14.png" alt="image-20210222112211883" style="zoom:80%;" />
+<img src=".\Java多线程学习\14.png" alt="image-20210222112211883" style="zoom:80%;" />
 
 其中：image3.jpg：1.18MB，image1.jpg：3.82MB，image2.jpg：10.0MB
 
@@ -919,8 +929,11 @@ public class JoinLearn implements Runnable {
 ### 守护线程(daemon)
 
 - 线程分为用户线程和守护线程
+
 - Java虚拟机(JVM)必须确保用户线程执行完毕
+
 - JVM不用等待守护线程执行完毕
+
 - 常见的守护线程有：后台记录操作日志、监控内存、垃圾回收等待……
 
 守护线程设置：
@@ -970,7 +983,9 @@ class You implements Runnable{
 ## 线程停止
 
 1. 建议线程正常停止，利用次数，不建议死循环
+
 2. 建议使用标志位，设置一个标志位
+
 3. 不要使用stop、destroy等过时的或者JDK不建议使用的方法
 
 **例子：**
@@ -1056,7 +1071,7 @@ class BuyTicket implements Runnable{
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\15.png" alt="image-20210303094541210" style="zoom:80%;" />
+<img src=".\Java多线程学习\15.png" alt="image-20210303094541210" style="zoom:80%;" />
 
 可见，由于每个线程都在自己的工作内存中交互，当内存控制不当时会造成数据不一致 ，比如A、B都买到票10，这是因为A、B线程都把票10拷贝到自己的线程内存中，所以它们都以为当时是票10
 
@@ -1134,7 +1149,7 @@ class Drawing extends Thread{
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\16.png" alt="image-20210303102531451" style="zoom:80%;" />
+<img src=".\Java多线程学习\16.png" alt="image-20210303102531451" style="zoom:80%;" />
 
 
 
@@ -1496,7 +1511,7 @@ class Drawing extends Thread{
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\17.png" alt="image-20210303111340343" style="zoom:80%;" />
+<img src=".\Java多线程学习\17.png" alt="image-20210303111340343" style="zoom:80%;" />
 
 为什么不是synchronized(this){}呢？
 
@@ -1670,7 +1685,7 @@ class Makeup extends Thread{
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\18.png" alt="image-20210303200234420" style="zoom:80%;" />
+<img src=".\Java多线程学习\18.png" alt="image-20210303200234420" style="zoom:80%;" />
 
 Tony和John同时抱着对方需要的资源，不放手，所以形成死锁
 
@@ -1706,7 +1721,7 @@ public void doMakeup() throws InterruptedException {
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\19.png" alt="image-20210303200703021" style="zoom:80%;" />
+<img src=".\Java多线程学习\19.png" alt="image-20210303200703021" style="zoom:80%;" />
 
 
 
@@ -1861,7 +1876,7 @@ public void doMakeup() throws InterruptedException {
 
     结果：
 
-    <img src="D:\blog\source\_posts\Java多线程学习\20.png" alt="image-20210304102028081" style="zoom:80%;" />
+    <img src=".\Java多线程学习\20.png" alt="image-20210304102028081" style="zoom:80%;" />
 
     由于线程运行顺序的不确定性，有时候会先输出消费，不过实际上它还是先生产的
 
@@ -1976,7 +1991,7 @@ public void doMakeup() throws InterruptedException {
 
   **结果：**
 
-  <img src="D:\blog\source\_posts\Java多线程学习\21.png" alt="image-20210304110830043" style="zoom:80%;" />
+  <img src=".\Java多线程学习\21.png" alt="image-20210304110830043" style="zoom:80%;" />
 
 
 
@@ -2106,9 +2121,9 @@ public class ChatClient2 {
 
 **结果：**
 
-<img src="D:\blog\source\_posts\Java多线程学习\22.png" alt="image-20210305104820681" style="zoom:80%;" />
+<img src=".\Java多线程学习\22.png" alt="image-20210305104820681" style="zoom:80%;" />
 
-<img src="D:\blog\source\_posts\Java多线程学习\23.png" alt="image-20210305104847020" style="zoom:80%;" />
+<img src=".\Java多线程学习\23.png" alt="image-20210305104847020" style="zoom:80%;" />
 
 
 
