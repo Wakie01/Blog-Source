@@ -2385,3 +2385,190 @@ class Solution {
 
 
 
+# 哈希表
+
+## [217. 存在重复元素](https://leetcode-cn.com/problems/contains-duplicate/)
+
+方法一：排序
+
+```java
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        Arrays.sort(nums);
+        boolean res=false;
+        for(int i=1;i<nums.length;i++){
+            if(nums[i-1]==nums[i]){
+                res=true;
+                break;
+            }
+        }
+        return res;
+    }
+}
+```
+
+方法二：使用Set，维持一个size=nums.length的滑动窗
+
+```java
+class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        Set<Integer> numSet=new HashSet<Integer>();
+        numSet.add(nums[0]);
+        for(int i=1;i<nums.length;i++) {
+        	if(numSet.contains(nums[i])) {
+        		return true;
+        	}else {
+        		numSet.add(nums[i]);
+        	}
+        }
+        return false;
+    }
+}
+
+```
+
+
+
+## [219. 存在重复元素 II](https://leetcode-cn.com/problems/contains-duplicate-ii/)
+
+方法一：使用Map
+
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer,List<Integer>> numMap=new HashMap<>();   //key:nums[i]   value:i
+        List<Integer> list=new ArrayList<>();
+        list.add(0);
+        numMap.put(nums[0],list);
+        for(int i=1;i<nums.length;i++){
+            if(numMap.containsKey(nums[i])) {
+            	list=numMap.get(nums[i]);
+            	if(Math.abs(i-list.get(0))<=k) {
+            		return true;
+            	}else {
+            		list.add(0,i);
+            		numMap.replace(nums[i], list);
+            	}
+            }else {
+            	list=new ArrayList<>();
+            	list.add(i);
+            	numMap.put(nums[i], list);
+            }
+        }
+        return false;
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Map<Integer,Integer> numMap=new HashMap<>();   //key:nums[i]   value:i
+        numMap.put(nums[0],0);
+        for(int i=1;i<nums.length;i++){
+            if(numMap.containsKey(nums[i])) {
+            	int val=numMap.get(nums[i]);
+            	if(Math.abs(i-val)<=k) {
+            		return true;
+            	}else {
+            		numMap.replace(nums[i], i);
+            	}
+            }else {
+            	numMap.put(nums[i], i);
+            }
+        }
+        return false;
+    }
+}
+```
+
+再优化空间复杂度，使用Set，维持一个size=k的滑动窗
+
+```java
+class Solution {
+    public boolean containsNearbyDuplicate(int[] nums, int k) {
+        Set<Integer> numSet=new HashSet<>();
+        for(int i=0;i<nums.length;i++) {
+            if(numSet.contains(nums[i])) return true;
+            numSet.add(nums[i]);
+            if(numSet.size()>k) {
+                numSet.remove(nums[i-k]);
+            }
+        }
+        return false;
+    }
+}
+```
+
+## [220. 存在重复元素 III](https://leetcode-cn.com/problems/contains-duplicate-iii/)
+
+方法一：维持一个size=k的滑动窗，超时
+
+```java
+class Solution {
+    public boolean containsNearbyAlmostDuplicate(int[] nums, int k, int t) {
+        if(k<=0) return false;
+        int slideWinStart=0;
+        
+        for(int i=1;i<nums.length;i++) {
+        	for(int j=slideWinStart;j<i;j++) {
+                System.out.println(Math.abs((long) nums[i]-(long) nums[j]));
+        		if(Math.abs((long) nums[i]-(long) nums[j])<=t) {
+                    return true;
+                }
+        	}
+        	if((i-slideWinStart)>=k) {
+        		slideWinStart++;
+        	}
+        }
+        return false;
+    }
+}
+```
+
+
+
+## [771. 宝石与石头](https://leetcode-cn.com/problems/jewels-and-stones/)
+
+```java
+class Solution {
+    public int numJewelsInStones(String jewels, String stones) {
+        int num=0;
+        Set<Character> set=new HashSet<>();
+        for(char c:jewels.toCharArray())
+            set.add(c);
+        for(char c:stones.toCharArray())
+            if(set.contains(c)) num++;
+        return num;
+    }
+}
+```
+
+
+
+## [136. 只出现一次的数字](https://leetcode-cn.com/problems/single-number/)
+
+方法一：hash表
+
+```java
+class Solution {
+    public int singleNumber(int[] nums) {
+        Set<Integer> set=new HashSet<>();
+        set.add(nums[0]);
+        for(int i=1;i<nums.length;i++){
+            if(!set.add(nums[i])) {
+                set.remove(nums[i]);
+            }
+        }
+        for (Integer integer : set) {
+            return integer;
+        }
+        return 0;  //多余
+    }
+}
+```
+
+方法二：异或
+

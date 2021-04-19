@@ -1,10 +1,10 @@
 ---
 title: Mysql常用SQL语句
+comment: true
+date: 2021-01-11 21:16:33
 tags: Mysql
 categories: DB
-comment: true
 addrlink: 1657
-date: 2021-01-11 21:16:33
 ---
 
 
@@ -109,7 +109,7 @@ INSERT语句有几种常用的用法：
 
 ## DELETE语句
 
-```mysql
+```sql
 delete from bill;       -- 删除bill表中的所有数据
 delete from bill where id=1;        -- 删除对应的数据
 delete from bill order by orderTime limit 2;       -- 删除以orderTime从小到大排序的前2条数据
@@ -119,7 +119,7 @@ delete from bill order by orderTime limit 2;       -- 删除以orderTime从小�
 
 ## TRUNCATE语句
 
-```mysql
+```sql
 truncate table bill；    -- 清空bill表数据
 ```
 
@@ -150,7 +150,7 @@ update menubill set finish=1,menuTime=NOW(),userId=1 where billId=1 and menuId=1
 
 select语法：
 
-```mysql
+```sql
 select [all | distinct]
 {* | table.* | [table.field1 [as alias1] [,table.field2 [as alias2]] [,...]]}
 from table_name [as table_alias]
@@ -165,7 +165,7 @@ from table_name [as table_alias]
 
 符号意思：
 
-```mysql
+```sql
 []   -- 可选
 {}   -- 必选
 |   -- 或
@@ -226,7 +226,7 @@ select id,name,quantity,price from menu order by price limit 50;
 
 例子1：
 
-```mysql
+```sql
 /*
 查询参加 数据库结构-1 考试的学生信息： 学号，学生姓名，科目名，分数
 涉及到的表：学生表、成绩表、科目表
@@ -244,7 +244,7 @@ order by studentResult desc;
 
 例子2：
 
-```mysql
+```sql
 /*
 查询“Java第一学年”课程成绩排名前十，并且分数要大于80的学生信息：学号，学生姓名，科目名，分数
 涉及到的表：学生表、成绩表、科目表
@@ -268,7 +268,7 @@ limit 10;
 
 这里用到了`distinct`关键字
 
-```mysql
+```sql
 -- 对查询结果进行去重
 select distinct billId,finish from `menubill`;
 ```
@@ -281,13 +281,13 @@ select distinct billId,finish from `menubill`;
 
 ## 系统变量查询
 
-```mysql
+```sql
 select @@auto_increment_increment   -- 查询自增步长
 ```
 
 常见系统变量：
 
-```mysql
+```sql
 @@auto_increment_increment      -- 自增步长
 
 ```
@@ -300,7 +300,7 @@ select @@auto_increment_increment   -- 查询自增步长
 
 例子一：
 
-```mysql
+```sql
 select studentNo,subjectNo,studentResult 
 from result
 where subjectNo=(
@@ -312,7 +312,7 @@ order by studentResult desc;
 
 例子二：
 
-```mysql
+```sql
 -- 子查询
 select distinct s.studentNo,studentName,studentResult
 from student s
@@ -349,13 +349,13 @@ where subjectName='高等数学-2' and studentResult>=80;
 
 具体函数可到[mysql官网](https://dev.mysql.com/doc/refman/8.0/en/sql-function-reference.html)上看
 
-```mysql
+```sql
 select version();    -- 查询mysql版本号
 ```
 
 ### 常见函数
 
-```mysql
+```sql
 -- 系统
 select version();    -- 查询mysql版本号
 select user()   -- 获取当前用户
@@ -394,7 +394,7 @@ MD5('123456')  -- 将123456加密成MD5
 
 **count()函数**
 
-```mysql
+```sql
 -- 获取表中数据的个数
 select count(bornDate) from student;
 select count(*) from student;
@@ -413,7 +413,7 @@ select count(1) from student;
 
 总和函数
 
-```mysql
+```sql
 select sum(studentResult) as '总和' from student;
 ```
 
@@ -421,7 +421,7 @@ select sum(studentResult) as '总和' from student;
 
 平均值函数
 
-```mysql
+```sql
 select avg(studentResult) as '平均分' from student;
 ```
 
@@ -429,7 +429,7 @@ select avg(studentResult) as '平均分' from student;
 
 最大值函数
 
-```mysql
+```sql
 select max(studentResult) as '最高分' from student;
 ```
 
@@ -437,7 +437,7 @@ select max(studentResult) as '最高分' from student;
 
 最小值函数
 
-```mysql
+```sql
 select min(studentResult) as '最低分' from student;
 ```
 
@@ -453,7 +453,7 @@ select min(studentResult) as '最低分' from student;
 
 例子：
 
-```mysql
+```sql
 /*
 查询各个科目的最低分，最高分，平均分，并且平均分要大于80
 涉及到表：result,subject
@@ -482,7 +482,7 @@ having '平均分'>80;
 
   between 例子：
 
-  ```mysql
+  ```sql
   select name,quantity,price,description from menu WHERE price BETWEEN 0 and 20;
   ```
 
@@ -494,7 +494,7 @@ having '平均分'>80;
 
   like例子：
 
-  ```mysql
+  ```sql
   -- 查询name字段的第一个字为大的数据
   select name,quantity,price,description from menu WHERE name like '大%';
   
@@ -509,7 +509,7 @@ having '平均分'>80;
 
   in例子：
 
-  ```mysql
+  ```sql
   -- 查询typeId为1or2or3的数据 
   select name,quantity,price,description from menu WHERE typeId in(1,2,3);
   ```
@@ -536,7 +536,7 @@ join关键字是用来连接两张表的，比如内连接、外连接、左连�
 
 例子1：
 
-```mysql
+```sql
 /*
 student、result、subject表连接查询，
 交叉点：studentNo，subjectNo
@@ -550,7 +550,7 @@ inner join subject sub on r.subjectNo=sub.subjectNo
 
 例子2：
 
-```mysql
+```sql
 /*
 查询参加 数据库结构-1 考试的学生信息： 学号，学生姓名，科目名，分数
 涉及到的表：学生表、成绩表、科目表
@@ -578,7 +578,7 @@ where subjectName='数据库结构-1';
 
 有一个这样的表：
 
-```mysql
+```sql
 CREATE TABLE category (
 	`categoryid` INT ( 3 ) NOT NULL COMMENT 'id',
 	`pid` INT ( 3 ) NOT NULL COMMENT '父id 没有父则为1',
@@ -623,7 +623,7 @@ VALUES
 | 软件开发 | web开发  |
 | 美术设计 | ps技术   |
 
-```mysql
+```sql
 select a.categoryName as '父栏目',b.categoryName as '子栏目'
 from category as a,category as b
 where a.categoryid=b.pid;
@@ -659,7 +659,7 @@ where a.categoryid=b.pid;
 
 跟事务相关的SQL：
 
-```mysql
+```sql
 -- mysql是默认开启事务自动提交的
 set autocommit=0   -- 关闭事务自动提交
 set autocommit=1   -- 开启事务自动提交（default）
@@ -692,7 +692,7 @@ release savepoint 保存点名   -- 撤销保存点
 
 例子：转账
 
-```mysql
+```sql
 -- 创建表
 create database shop character set utf8 collate utf8_general_ci;
 
@@ -737,7 +737,7 @@ set autocommit=1;  -- 事务结束，重启事务自动提交
 
 关于索引的SQL：
 
-```mysql
+```sql
 -- 显示所有的索引信息
 show index from student;   -- 显示student表的索引信息
 
@@ -753,7 +753,7 @@ explain select * from student where match(studentName) against('刘');   -- 全�
 
 例子一：测试索引
 
-```mysql
+```sql
 -- 创建表
 CREATE TABLE `app_user` (
 `id` BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -792,7 +792,7 @@ end;  -- 函数结束
 select mock_data();   -- 执行mock_data()函数 
 ```
 
-```mysql
+```sql
 -- 有了数据后进行查询
 explain select * from app_user WHERE name='用户999';  -- 没索引，结果显示查询了992465条数据
 
