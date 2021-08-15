@@ -854,6 +854,21 @@ EXPLAIN select * from app_user WHERE name='用户999';  -- name有了索引，�
 
 
 
+# 常用命令
+
+- **运行SQL文件**
+
+  ```sql
+  # source 命令
+  
+  use pim;   -- 先进入数据库
+  set names utf8mb4;     -- 设定sql文件编码方式
+  source works/pim/databases/pim.sql;    -- 执行sql文件
+  ```
+```
+  
+  
+
 
 
 <br/>
@@ -871,3 +886,4 @@ EXPLAIN select * from app_user WHERE name='用户999';  -- name有了索引，�
 4.[Mysql—— 内连接、左连接、右连接以及全连接查询](https://blog.csdn.net/zjt980452483/article/details/82945663)
 
 [MySQL索引背后的数据结构及算法原理](http://blog.codinglabs.org/articles/theory-of-mysql-index.html)
+```

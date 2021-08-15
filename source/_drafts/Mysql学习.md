@@ -259,3 +259,41 @@ InnoDB，安全性高，支持事务处理，多表多用户操作
 
 
 
+# 数据导入
+
+最近在弄运行转储SQL文件时总是出现很多莫名奇妙的错误，记录一下
+
+## 注意点
+
+- 保证数据库的字符集、排序方式是一样的
+- 
+
+
+
+## 问题
+
+
+
+**问题一：** MySQL server has gone away
+
+**原因：** 可能是sql语句过长，超过mysql通信缓存区最大长度
+
+**解决：** 
+
+1. 编辑 MySQL 安装目录下的 my.ini，修改或添加如下：
+
+   ```ini
+   max_allowed_packet=16M
+   wait_timeout=2880000
+   interactive_time=2880000
+   ```
+
+2. 重启mysql
+
+
+
+
+
+参考：
+
+[MYSQL数据库导入大数据量sql文件失败的解决方案](https://www.cnblogs.com/yangrl/p/6679682.html)

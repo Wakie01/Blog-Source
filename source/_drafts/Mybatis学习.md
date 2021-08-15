@@ -386,5 +386,72 @@ select标签属性：
 
 
 
+# Spring boot结合Myabtis
+
+导入maven依赖：
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.mybatis.spring.boot</groupId>
+        <artifactId>mybatis-spring-boot-starter</artifactId>
+        <version>2.1.2</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.mybatis</groupId>
+        <artifactId>mybatis</artifactId>
+        <version>3.5.4</version>
+    </dependency>
+
+    <dependency>
+        <groupId>mysql</groupId>
+        <artifactId>mysql-connector-java</artifactId>
+        <version>8.0.22</version>
+    </dependency>
+</dependencies>
+```
+
+application.yml文件配置
+
+```yaml
+## mybatis配置
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.my.ourapp.entity
+```
+
+启动类注解扫描Mapper接口
+
+```java
+package com.my.ourapp;
+
+@SpringBootApplication
+@MapperScan(basePackages = {"com.my.ourapp.mapper"})
+public class OurappApplication {
+
+    public static void main(String[] args) {
+        SpringApplication.run(OurappApplication.class, args);
+    }
+}
+```
+
+编写mapper接口：
+
+```java
+package com.my.ourapp.mapper;
+
+@Mapper
+
+@Repository
+public interface UserInfoMapper {
+
+    @Insert("insert into user_info (name,phone,password,sex) "+
+            "values (#{name},#{phone},#{password},#{sex})")
+    int signup(String name,String phone,String password,Boolean sex);
+
+}
+```
+
 
 

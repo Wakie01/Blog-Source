@@ -172,9 +172,108 @@ pom.xml文件：
 
 ## @Configuration
 
+**作用：**
+
+它代表这是一个配置类，类似于`beans.xml`配置文件
+
+同时它也是一个`@Component`的衍生注解，它所注解的类会被Spring容器托管，注册到容器中
+
+**使用：**
+
+```java
+@Configuration
+public class ApplicationConfig {
+    @Bean
+    public User getUser(){
+        return new User();
+    }
+}
+```
+
+它相当于在`resources`文件夹内创建一个`beans.xml`文件，文件内容：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="getUser" class="com.my.springAppconfig.pojo.User" />
+</beans>
+```
+
+**注意：** 如果使用了配置类的方式配置Spring，则需要通过`AnnotationConfigApplicationContext`来获取Spring容器
+
+```java
+ApplicationContext context=new AnnotationConfigApplicationContext(ApplicationConfig.class);
+```
+
+## @ComponentScan
+
+**作用：**
+
+组件扫描，通常与`@Configuration`搭配使用
+
+**使用：**
+
+```java
+@Configuration
+@ComponentScan(basePackages = {"com.my.springAppconfig"})
+public class ApplicationConfig {
+    @Bean
+    public User getUser(){
+        return new User();
+    }
+}
+```
+
+它相当于`beans.xml`文件中的：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+    <context:component-scan base-package="com.my.springAppconfig" />
+ 
+</beans>
+```
+
+## @Import
+
+**作用：** 
+
+用于引入其他配置类
+
+**使用：** 
+
+```java
+@Configuration
+@ComponentScan(basePackages = {"com.my.springAppconfig"})
+@Import({MyConfig.class})
+public class ApplicationConfig {
+
+    @Bean
+    public User getUser(){
+        return new User();
+    }
+}
+```
+
 
 
 ## @Bean
+
+**作用：**
+
+可使用于类名前或方法前
+
+当使用于方法前时，它就是注册一个bean，相当于`beans.xml`文件中的一个bean标签，这个方法的名字，就相当于bean标签中的id属性，这个方法的返回值，就相当于bean标签中的class属性
+
+**使用：** 同`@Configuration`和`@ComponentScan`
 
 
 
@@ -184,21 +283,43 @@ pom.xml文件：
 
 它是一个通用的构造型注解，表明该类是一个spring组件
 
+Spring容器会默认构造一个id为该类名（首字母小写）的bean
+
+当然也可以通过`@Component`下的value属性设置bean的id
+
 **使用：**
 
 在类名前使用
+
+```java
+//@Component("myUser")    //Spring容器将会创建id为myUser的bean
+@Component  //Spring容器将会创建id为user的bean
+public class User {
+    private String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+```
+
+
 
 ## @Repository
 
 **作用：**
 
-它也是表明该类是一个spring组件，同时，它也表明该类定义了一个数据存储库，即DAO层的注解
+`@Component`的衍生注解，它也是表明该类是一个spring组件，同时，它也表明该类定义了一个数据存储库，即DAO层的注解 
 
 ## @Service
 
 **作用：**
 
-表明该类是一个spring组件，用于标注服务层组件
+`@Component`的衍生注解，表明该类是一个spring组件，用于标注服务层组件
 
 ## @Data
 
@@ -222,6 +343,18 @@ pom.xml文件：
 **作用：**
 
 自动生成实体类的getter和setter方法，还有toString、equals、hashCode方法
+
+
+
+## @Accessors(chain = true)
+
+**引入**
+
+使用这个注解前先要引用lombok依赖
+
+**作用：**
+
+链式调用`setter()`方法
 
 
 
@@ -310,7 +443,7 @@ public String controllerTest(@RequestParam(name="word",defaultValue = "no word")
 
 **作用：**
 
-标识这是个Controller类，表示这个类是用来处理http请求的
+`@Component`的衍生注解，标识这是个Controller类，表示这个类是用来处理http请求的
 
 然而，这个注解一般表示这个Controller类下的方法返回的是一个页面，如jsp页面
 
@@ -430,4 +563,170 @@ public class UserController {
 **使用：**
 
 
+
+
+
+## @AutoWired
+
+**作用：**
+
+通过注解自动注入
+它自动往Spring容器中获取该类型的bean，然后注入 
+当Spring容器中存在多个该类型的bean时，则需要搭配`@Qualifier`使用，`@Qualifier`可确任获取某个id的bean
+
+**使用：**
+
+```java
+public class Person {
+
+    @Autowired
+    private Dog dog;
+
+    public Dog getDog() {
+        return dog;
+    }
+}
+```
+
+Spring容器：
+
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        https://www.springframework.org/schema/context/spring-context.xsd">
+
+	<!-- 允许使用注解配置Spring容器 -->
+    <context:annotation-config />
+
+    <bean id="myDog" class="com.my.springAutowired.pojo.Dog" />
+    <bean id="person" class="com.my.springAutowired.pojo.Person" />
+</beans>
+```
+
+
+
+
+## @Qualifier
+
+**作用：**
+
+用于告诉Spring容器注入哪个Bean，常与`@AutoWired`搭配使用
+
+**使用：**
+
+```java
+//接口
+public interface MemberService {
+    
+}
+
+//实现类一
+@Service("memberService1")
+public class MemberServiceImpl1 implements MemberService{
+    
+}
+
+//实现类二
+@Service("memberService2")
+public class MemberServiceImpl2 implements MemberService{
+    
+}
+
+//调用类
+@Controller("/member")
+public class MemberController{
+    @Autowired
+    @Qualifier("memberService2")   //此处如果不使用该注解则报错，原因就是容器不知道注入哪一个实现类
+    private MemberService memberService;
+
+}
+```
+
+## @Value
+
+**作用：**
+
+常用于给类的属性设置默认值
+
+
+
+## @Scope
+
+**作用：**
+
+设置Bean的作用域
+
+常用的作用域有：
+
+- `ConfigurableBeanFactory.SCOPE_SINGLETON` ：singleton
+- `ConfigurableBeanFactory.SCOPE_PROTOTYPE` ：prototype
+
+**使用：**
+
+```java
+package com.my.springAnno.pojo;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+@Component
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+public class User {
+    @Value("tonya")
+    private String name;
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+}
+
+```
+
+
+
+## @SpringBootTest
+
+**作用：**
+
+将Spring boot容器与Junit整合起来，表明该类是Spring boot的测试类
+
+作用域：Type，类
+
+**使用：**
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class UserInfoMapperTests {
+
+    @Autowired
+    private UserInfoMapper userInfoMapper;
+
+    @Test
+    public void contextLoad(){
+        UserInfo userInfo=new UserInfo();
+    }
+
+
+    @Test
+    public void testSignup(){
+        String name="testname";
+        String phone="12345678901";
+        String password="aaaaaaaa";
+        boolean sex=true;
+        userInfoMapper.signup(name,phone,password,sex);
+    }
+}
+```
 

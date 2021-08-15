@@ -37,6 +37,8 @@ public class ListSortLearn {
 
 # 复杂的
 
+方法一：对要排序的类实现`Comparable`接口
+
 ```java
 public class ListSortLearn {
     public static void main(String[] args) {
@@ -100,3 +102,71 @@ class MenuRecord implements Comparable<MenuRecord>{
 结果：
 
 ![img1](D:\blog\source\_posts\java对List进行排序\1.png)
+
+
+
+
+
+方法二：传入自己实现的`Comparable`接口
+
+```java
+public class Employee {
+    public int id;
+    public int importance;
+    public List<Integer> subordinates;
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", importance=" + importance +
+                ", subordinates=" + subordinates +
+                '}';
+    }
+    
+    public static void main(String[] args) {
+        List<Employee> list=new ArrayList<>();
+        for(int i=0;i<10;i++){
+            Employee employee=new Employee();
+            employee.id=(int) (Math.random()*100);
+            employee.importance=(int) (Math.random()*100);
+            employee.subordinates=new ArrayList<>();
+            list.add(employee);
+        }
+        
+        Collections.sort(list, new Comparator<Employee>() {
+            @Override
+            public int compare(Employee o1, Employee o2) {
+                return o2.importance-o1.importance;    //根据importance从大到小排序
+            }
+        });
+        
+        for (Employee employee : list) {
+            System.out.println(employee.toString());
+        }
+    }
+}
+```
+
+结果：
+
+<img src="./java对List进行排序/3.png" alt="image-20210519143547235" style="zoom:80%;" />
+
+
+
+代码优化：
+
+`Comparable`接口只有一个方法，可以使用Lamda表达式
+
+```java
+public static void main(String[] args) {
+    //同上
+    Collections.sort(list, (Employee o1,Employee o2) ->{
+        return o2.importance-o1.importance;    //根据importance从大到小排序
+    });
+    //同上
+}
+```
+
+
+

@@ -189,3 +189,31 @@ $ npm install
 ```
 
 当有了package.json文件，执行上面命令将自动下载项目的各种依赖。
+
+
+
+## 查看已安装的依赖
+
+```bash
+# 语法
+npm ls [[<@scope>/]<pkg> ...]
+
+aliases: list, la, ll
+
+$ npm ls       # 查看该目录下安装的依赖
+$ npm ls -g    # 查看全局安装的依赖
+```
+
+
+
+## 检查模块是否过时
+
+```bash
+# 语法
+npm outdated [[<@scope>/]<pkg> ...]
+
+$ npm outdated -g  # 列出过时的全局依赖
+```
+
+
+

@@ -187,6 +187,8 @@ public List importExcel2(@RequestParam("excelFile") MultipartFile excelFile){
 
 ## 编辑Excel表
 
+**例子一：**
+
 最近要弄一个这样的东西，在这个表中插入几百条随机数据，怎么弄呢？
 
 ![img6](D:\blog\source\_posts\java解析Excel文件\6.png)
@@ -307,6 +309,140 @@ public void createRandomExcel2(@RequestParam("excelFile") MultipartFile excelFil
         } catch (IOException e) {
             e.printStackTrace();
         }
+}
+```
+
+
+
+**例子二：**
+
+注意，在往Excel表填数据时，需要对Row、Cell给初始化，不然就会报指针为空的错误
+
+```java
+public class ExcelAnalyse {
+
+    //解析管道数据
+    public List<PipelineDepthData> getExcelAnayseData(File file) {
+        List<PipelineDepthData> analyseData = new ArrayList<PipelineDepthData>();
+        int i = 1;
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            Workbook workbook = WorkbookFactory.create(inputStream);
+            Sheet sheet = workbook.getSheetAt(3);
+            int rowNum = sheet.getPhysicalNumberOfRows();
+            
+            for (i = 1; i < rowNum; i++) {
+                Row row = sheet.getRow(i);
+                PipelineDepthData data = new PipelineDepthData();
+                //相对起始位置距离（m）
+                Cell cell0 = row.getCell(0);
+                if (cell0.getCellType().equals(CellType.STRING)) {
+                    data.setTestStationId(cell0.getStringCellValue());
+                    data.setRelativePosition(0);
+                } else {
+                    data.setTestStationId(analyseData.get(analyseData.size() - 1).getTestStationId());
+                    data.setRelativePosition((int) cell0.getNumericCellValue());
+                }
+                //埋深（m）
+                Cell cell1 = row.getCell(1);
+                data.setBuryDepth(cell1.getNumericCellValue());
+                //经度
+                Cell cell2 = row.getCell(2);
+                data.setLatitude(cell2.getNumericCellValue());
+                //纬度
+                Cell cell3 = row.getCell(3);
+                data.setLongtitude(cell3.getNumericCellValue());
+                //备注
+                Cell cell5 = row.getCell(5);
+                data.setRemarks(cell5.getStringCellValue());
+                analyseData.add(data);
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return analyseData;
+    }
+
+    public boolean writeToExcelTemplate(List<PipelineDepthData> excelAnalyseData, File file) {
+        try {
+            InputStream inputStream = new FileInputStream(file);
+            Workbook workbook = WorkbookFactory.create(inputStream);
+            Sheet sheet = workbook.getSheetAt(0);
+
+            int colNum=sheet.getRow(1).getPhysicalNumberOfCells();
+            for (int i = 0; i < excelAnalyseData.size(); i++) {
+                Row row = sheet.getRow(i + 2);
+                if(row==null) row=sheet.createRow(i+2);
+
+                for(int j=0;j<colNum;j++){
+                    Cell cell=row.getCell(j);
+                    if(cell==null) cell=row.createCell(j);
+                    switch (j){
+                        case 0:{
+                            cell.setCellValue((i + 1)+"");
+                            break;
+                        }
+                        case 1:{
+                            cell.setCellValue(excelAnalyseData.get(i).getTestStationId());
+                            break;
+                        }
+                        case 3:{
+                            cell.setCellValue(excelAnalyseData.get(i).getRelativePosition());
+                            break;
+                        }
+                        case 4:{
+                            cell.setCellValue(excelAnalyseData.get(i).getLongtitude());
+                            break;
+                        }
+                        case 5:{
+                            cell.setCellValue(excelAnalyseData.get(i).getLatitude());
+                            break;
+                        }
+                        case 6:{
+                            cell.setCellValue(excelAnalyseData.get(i).getBuryDepth());
+                            break;
+                        }
+                        case 9:{
+                            if (excelAnalyseData.get(i).getRemarks() == null || excelAnalyseData.get(i).getRemarks().length()==0) {
+                                cell.setBlank();
+                            } else {
+                                cell.setCellValue(excelAnalyseData.get(i).getRemarks());
+                            }
+                            break;
+                        }
+                        case 2:
+                        case 7:
+                        case 8:{
+                            cell.setBlank();
+                            break;
+                        }
+                    }
+                }
+            }
+
+            OutputStream outputStream = new FileOutputStream(file);
+            workbook.write(outputStream);
+            return true;
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        ExcelAnalyse excelAnalyse = new ExcelAnalyse();
+        File dataFile = new File("西三线吉安-瑞金段管道外检测项目检测报告附件1-8(修改版).xlsx");
+        List<PipelineDepthData> excelAnayseData = excelAnalyse.getExcelAnayseData(dataFile);
+        File targetFile=new File("管线埋深数据表.xlsx");
+        System.out.println(excelAnalyse.writeToExcelTemplate(excelAnayseData, targetFile));
+    }
 }
 ```
 

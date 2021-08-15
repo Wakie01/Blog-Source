@@ -103,6 +103,84 @@ $ nginx -v
 
 
 
+## 离线安装
+
+离线安装nginx需要先安装：
+
+- gcc
+- pcre
+- zlib
+- openssl
+
+比如我，在这里已经安装好了gcc和openssl，所以就不用再安装了
+
+
+
+先下载好pcre、zlib、nginx的tar.gz包
+
+pcre：
+
+```bash
+tar -zxvf pcre/pcre-8.45.tar.gz
+./configure
+make
+make install
+```
+
+zlib：
+
+```bash
+tar -zxvf zlib/zlib-1.2.11.tar.gz
+./configure
+make
+make install
+```
+
+nginx：
+
+```bash
+tar -zxvf nginx-1.20.1.tar.gz
+./configure
+make
+make install
+```
+
+启动nginx：
+
+运行nginx安装目录下的`sbin/nginx`，在启动时最好指定配置文件，如：
+
+```bash
+root@ubuntu:/usr/local/nginx# ./sbin/nginx -c ./conf/nginx.conf
+```
+
+重启nginx：
+
+```bash
+./nginx -s reload -c ../conf/nginx.conf 
+```
+
+
+
+nginx常用命令：
+
+```bash
+root@ubuntu:/usr/local/nginx# ./sbin/nginx -help
+nginx version: nginx/1.20.1
+Usage: nginx [-?hvVtTq] [-s signal] [-p prefix]
+             [-e filename] [-c filename] [-g directives]
+
+Options:
+  -?,-h         : this help
+  -s signal     : send signal to a master process: stop, quit, reopen, reload
+  -p prefix     : set prefix path (default: /usr/local/nginx/)
+  -e filename   : set error log file (default: logs/error.log)
+  -c filename   : set configuration file (default: conf/nginx.conf)
+```
+
+
+
+
+
 ## Nginx配置文件
 
 - Nginx的核心配置文件是`nginx.conf`

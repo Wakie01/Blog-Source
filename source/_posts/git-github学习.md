@@ -34,6 +34,8 @@ $ git status
 $ git add [file_name] 
 ```
 
+​	常用`git add .`来将所有修改或新建的文件添加到暂存区
+
 - 将暂存区的内容提交到本地库
 
 ```bash
@@ -135,7 +137,7 @@ $ git branch -v
 ```bash
 $ git checkout [分支名]
 ```
- 
+
 - 合并分支
 
   1. 切换到接收修改的分支
