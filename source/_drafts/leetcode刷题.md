@@ -1494,6 +1494,166 @@ private boolean hasPathSum(TreeNode root,int targetSum){
 }
 ```
 
+## [113. 路径总和 II](https://leetcode-cn.com/problems/path-sum-ii/)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        List<List<Integer>> res=new ArrayList<>();
+        if(root==null) return res;
+        List<Integer> path=new ArrayList<>();
+        path.add(root.val);
+        if(root.left!=null){
+            traver(res,path,root.left,targetSum-root.val);
+        }
+        if(root.right!=null){
+            traver(res,path,root.right,targetSum-root.val);
+        }
+
+        if(root.left==null && root.right==null){
+            if(root.val==targetSum){
+                res.add(path);
+            }
+        }
+
+        return res;
+    }
+
+    public void traver(List<List<Integer>> res,List<Integer> path,TreeNode node,int remain){
+        List<Integer> newPath=new ArrayList<>(path);
+        newPath.add(node.val);
+        if(node.left!=null){
+            traver(res,newPath,node.left,remain-node.val);
+        }
+        if(node.right!=null){
+            traver(res,newPath,node.right,remain-node.val);
+        }
+
+        if(node.left==null && node.right==null){
+            if(remain==node.val){
+                res.add(newPath);
+            }
+            return ;
+        }
+    }
+}
+```
+
+优化版：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    List<List<Integer>> ret = new LinkedList<List<Integer>>();
+    Deque<Integer> path = new LinkedList<Integer>();
+
+    public List<List<Integer>> pathSum(TreeNode root, int targetSum) {
+        dfs(root, targetSum);
+        return ret;
+    }
+
+    public void dfs(TreeNode root, int targetSum) {
+        if (root == null) {
+            return;
+        }
+        path.offerLast(root.val);
+        targetSum -= root.val;
+        if (root.left == null && root.right == null && targetSum == 0) {
+            ret.add(new LinkedList<Integer>(path));
+        }
+        dfs(root.left, targetSum);
+        dfs(root.right, targetSum);
+        path.pollLast();
+    }
+
+}
+```
+
+## [437. 路径总和 III](https://leetcode-cn.com/problems/path-sum-iii/)
+
+方法：对每个结点都求路径总和
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    
+    private int res=0;
+    
+    public int pathSum(TreeNode root, int targetSum) {
+        traver(root,targetSum);
+        return res;
+    }
+
+    public void traver(TreeNode node,int targetSum){
+        if(node==null) return;
+
+        computePathSum(node,targetSum);
+
+        traver(node.left,targetSum);
+        traver(node.right,targetSum);
+    }
+
+    public void computePathSum(TreeNode node,int target){
+        target-=node.val;
+        if(target==0){
+            res++;
+        }
+
+        if(node.left!=null) computePathSum(node.left,target);
+        if(node.right!=null) computePathSum(node.right,target);
+    }
+
+}
+```
+
+
+
+
+
 
 
 ## [108. 将有序数组转换为二叉搜索树](https://leetcode-cn.com/problems/convert-sorted-array-to-binary-search-tree/)
@@ -3268,9 +3428,66 @@ class Solution {
 }
 ```
 
+## [11. 盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
 
+方法：双指针
 
+在每个状态下，无论长板或短板向中间收窄一格，都会导致水槽底边宽度-1变短：
 
+- 若向内移动短板，水槽的短板可能变大，因此下个水槽的面积可能增大 。
+- 若向内移动长板，水槽的短板不变或变小，因此下个水槽的面积一定变小 。
+
+```java
+class Solution {
+    public int maxArea(int[] height) {
+        int left=0,right=height.length-1;
+        int max=0;
+
+        while(left<right){
+            int area=Math.min(height[left],height[right])*(right-left);
+            if(area>max){
+                max=area;
+            }
+            if(height[left]>height[right]){
+                right--;
+            }else{
+                left++;
+            }
+        }
+        return max;
+    }
+}
+```
+
+## [56. 合并区间](https://leetcode-cn.com/problems/merge-intervals/)
+
+```java
+class Solution {
+    public int[][] merge(int[][] intervals) {
+        if(intervals.length==0) return new int[][]{};
+
+        Arrays.sort(intervals, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[0]-o2[0];
+            }
+        });
+        List<int[]> res=new ArrayList<>();
+        int left=intervals[0][0],right=intervals[0][1];
+        for(int i=1;i<intervals.length;i++){
+            if(intervals[i][0]-right>0){
+                res.add(new int[]{left,right});
+                left=intervals[i][0];
+                right=intervals[i][1];
+            }else{
+                right=Math.max(intervals[i][1],right);
+            }
+        }
+        res.add(new int[]{left,right});
+        return res.toArray(new int[res.size()][]);
+    }
+}
+```
 
 
 
@@ -4896,6 +5113,28 @@ class Solution {
 }
 ```
 
+## [292. Nim 游戏](https://leetcode-cn.com/problems/nim-game/)
+
+方法：**巴什博弈(Bash Game)**
+
+**问题：** 只有一堆n个物品，两个人轮流从这堆物品中取物，规定每次至少取一个，最多取m个，最后取光者得胜。
+
+**思路：** 专注于决胜局，即最后只有m+1个物品。面临决胜局，先取者输，后取者赢。
+
+**解决：** 设在决胜局前进行了r轮对决， $n=(m+1)*r+s$ ，其中 $0<=s<=m$ ，当 $s=0$ 时，先取者输，反之先取者赢。优化得：若 $n\%(m+1)=0$ ，先取者输，反之先取者赢。
+
+```java
+class Solution {
+    public boolean canWinNim(int n) {
+        return n%4!=0;
+    }
+}
+```
+
+
+
+
+
 
 
 
@@ -5335,6 +5574,141 @@ class Solution {
     }
 }
 ```
+
+## [763. 划分字母区间](https://leetcode-cn.com/problems/partition-labels/)
+
+```java
+class Solution {
+    public List<Integer> partitionLabels(String s) {
+        List<Integer> res=new ArrayList<>();
+        Map<Character,Integer> map=new HashMap<>();   //记录char c 和其最后出现位置的 map
+        for (int i = 0; i < s.length(); i++) {
+            map.put(s.charAt(i),i);
+        }
+        int max=-1;
+        int l=-1;
+        for (int i = 0; i < s.length(); i++) {
+            max=Math.max(map.get(s.charAt(i)),max);
+            if(i>=max){
+                res.add(i-l);
+                l=i;
+            }
+        }
+        return res;
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public List<Integer> partitionLabels(String s) {
+        int[] last = new int[26];
+        int length = s.length();
+        for (int i = 0; i < length; i++) {
+            last[s.charAt(i) - 'a'] = i;
+        }
+        List<Integer> partition = new ArrayList<Integer>();
+        int start = 0, end = 0;
+        for (int i = 0; i < length; i++) {
+            end = Math.max(end, last[s.charAt(i) - 'a']);
+            if (i == end) {
+                partition.add(end - start + 1);
+                start = end + 1;
+            }
+        }
+        return partition;
+    }
+}
+```
+
+## [447. 回旋镖的数量](https://leetcode-cn.com/problems/number-of-boomerangs/)
+
+```java
+class Solution {
+    public int numberOfBoomerangs(int[][] points) {
+        int num=0;
+        for (int i = 0; i < points.length; i++) {
+            Map<Integer,Integer> map=new HashMap<>();
+            for(int j=0; j<points.length;j++){
+                if(j==i) continue;
+                int distance=(int) Math.pow((points[j][0]-points[i][0]),2)+(int) Math.pow((points[j][1]-points[i][1]),2);
+                map.put(distance,map.getOrDefault(distance,0)+1);
+            }
+            for (Integer d : map.keySet()) {
+                int n=map.get(d);
+                num+=(n*(n-1));
+            }
+        }
+        return num;
+    }
+}
+```
+
+优化：
+
+```java
+class Solution {
+    public int numberOfBoomerangs(int[][] points) {
+        int num=0;
+        for (int i = 0; i < points.length; i++) {
+            Map<Double,Integer> map=new HashMap<>();
+            for(int j=0; j<points.length;j++){
+                if(j==i) continue;
+                double distance=Math.pow((points[j][0]-points[i][0]),2)+Math.pow((points[j][1]-points[i][1]),2);
+                map.put(distance,map.getOrDefault(distance,0)+1);
+            }
+            for (double d : map.keySet()) {
+                int n=map.get(d);
+                num+=(n*(n-1));
+            }
+        }
+        return num;
+    }
+}
+```
+
+## [146. LRU 缓存机制](https://leetcode-cn.com/problems/lru-cache/)
+
+方法一：
+
+```java
+public class LRUCache extends LinkedHashMap<Integer,Integer> {
+
+    private int capacity;
+
+
+    public LRUCache(int capacity) {
+        super(capacity,0.75F,true);
+        this.capacity=capacity;
+    }
+
+    public int get(int key) {
+        return super.getOrDefault(key,-1);
+    }
+
+    public void put(int key, int value) {
+        super.put(key,value);
+    }
+
+    @Override
+    protected boolean removeEldestEntry(Map.Entry<Integer, Integer> eldest) {
+        return super.size()>capacity;
+    }
+}
+
+/**
+ * Your LRUCache object will be instantiated and called as such:
+ * LRUCache obj = new LRUCache(capacity);
+ * int param_1 = obj.get(key);
+ * obj.put(key,value);
+ */
+```
+
+
+
+
 
 
 
@@ -5922,7 +6296,930 @@ class Solution {
 }
 ```
 
+## [143. 重排链表](https://leetcode-cn.com/problems/reorder-list/)
 
+方法：一头一尾取元素
+
+```
+1 -> 2 -> 3 -> 4 -> 5 -> 6
+第一步，将链表平均分成两半
+1 -> 2 -> 3
+4 -> 5 -> 6
+    
+第二步，将第二个链表逆序
+1 -> 2 -> 3
+6 -> 5 -> 4
+    
+第三步，依次连接两个链表
+1 -> 6 -> 2 -> 5 -> 3 -> 4
+```
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public void reorderList(ListNode head) {
+        //将链表分为两部分
+        if(head==null) return ;
+        ListNode front=head,end=head.next;
+        while(end!=null && end.next!=null){
+            front=front.next;
+            end=end.next.next;
+        }
+
+        //将后部分的链表放入栈中
+        Stack<ListNode> stack=new Stack<>();
+        ListNode p=front.next;
+        while(p!=null){
+            stack.push(p);
+            p=p.next;
+        }
+        
+        //对前后部分的链表进行断开
+        front.next=null;
+        
+        //一头一尾取元素
+        front=head;
+        while(front!=null){
+            ListNode nextTemp=front.next;
+
+            ListNode node=null;
+            if(!stack.empty()){
+                node=stack.pop();
+            }
+            
+            front.next=node;
+            front=front.next;
+            if(front!=null){
+                front.next=nextTemp;
+                front=front.next;
+            }
+        }
+    }
+}
+```
+
+优化：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public void reorderList(ListNode head) {
+        //将链表分为两部分
+        if(head==null) return ;
+        ListNode p1=head,p2=head.next;
+        while(p2!=null && p2.next!=null){
+            p1=p1.next;
+            p2=p2.next.next;
+        }
+
+        //将后部分的链表放入栈中
+        Stack<ListNode> stack=new Stack<>();
+        p2=p1.next;
+        while(p2!=null){
+            stack.push(p2);
+            p2=p2.next;
+        }
+        
+        //对前后部分的链表进行断开
+        p1.next=null;
+        
+        //一头一尾取元素
+        p1=head;
+        while(p1!=null){
+            ListNode nextTemp=p1.next;
+            p2=null;
+            if(!stack.empty()){
+                p2=stack.pop();
+            }
+            p1.next=p2;
+            p1=p1.next;
+            if(p1!=null){
+                p1.next=nextTemp;
+                p1=p1.next;
+            }
+        }
+    }
+}
+```
+
+## [150. 逆波兰表达式求值](https://leetcode-cn.com/problems/evaluate-reverse-polish-notation/)
+
+```java
+class Solution {
+    public int evalRPN(String[] tokens) {
+        Stack<Integer> numStack=new Stack<>();
+
+        for(String str:tokens){
+            if(str.equals("+") || str.equals("-") || str.equals("*") || str.equals("/")){
+                int num1=numStack.pop();
+                int num2=numStack.pop();
+                if(str.equals("+")){
+                    num2+=num1;
+                }else if(str.equals("-")){
+                    num2-=num1;
+                }else if(str.equals("*")){
+                    num2*=num1;
+                }else{
+                    num2/=num1;
+                }
+                numStack.push(num2);
+            }else{
+                numStack.push(Integer.parseInt(str));
+            }
+        }
+
+        return numStack.pop();
+    }
+}
+```
+
+## [394. 字符串解码](https://leetcode-cn.com/problems/decode-string/)
+
+```java
+class Solution {
+    public String decodeString(String s) {
+        StringBuilder res=new StringBuilder();
+        Stack<Integer> numStack=new Stack<>();
+        Stack<String> strStack=new Stack<>();
+
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; ) {
+            if(isNumber(chars[i])){
+                StringBuilder numStr= new StringBuilder();
+                numStr.append(chars[i++]);
+                while(i<chars.length && isNumber(chars[i])){
+                    numStr.append(chars[i++]);
+                }
+                numStack.push(Integer.parseInt(numStr.toString()));
+
+            }else if(chars[i]=='['){
+                StringBuilder str=new StringBuilder();
+                i++;
+                while(i<chars.length && !isNumber(chars[i]) && chars[i]!='[' && chars[i]!=']'){
+                    str.append(chars[i++]);
+                }
+                strStack.push(str.toString());
+
+            }else if(chars[i]==']'){
+                String str = strStack.pop();
+                StringBuilder strBuilder=new StringBuilder();
+                int num=numStack.pop();
+                while(num>0){
+                    strBuilder.append(str);
+                    num--;
+                }
+                if(numStack.empty()){
+                    res.append(strBuilder);
+                }else {
+                    strStack.push(strStack.pop()+ strBuilder);
+                }
+                i++;
+
+            }else{
+                StringBuilder strBuilder=new StringBuilder();
+                strBuilder.append(chars[i++]);            
+                while(i<chars.length && !isNumber(chars[i]) && chars[i]!='[' && chars[i]!=']'){
+                    strBuilder.append(chars[i++]);
+                }
+
+                if(numStack.empty()){
+                    res.append(strBuilder);
+                }else{
+                    strStack.push(strStack.pop()+strBuilder);
+                }
+            }
+        }
+        return res.toString();
+    }
+
+    public boolean isNumber(char c){
+        return c>='0' && c<='9';
+    }
+}
+```
+
+## [445. 两数相加 II](https://leetcode-cn.com/problems/add-two-numbers-ii/)
+
+方法一：三个栈
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        Stack<Integer> num1Stack=new Stack<>();
+        Stack<Integer> num2Stack=new Stack<>();
+        Stack<Integer> resStack=new Stack<>();
+
+        while(l1!=null){
+            num1Stack.push(l1.val);
+            l1=l1.next;
+        }
+        while(l2!=null){
+            num2Stack.push(l2.val);
+            l2=l2.next;
+        }
+
+        boolean carry=false;
+        while(!num1Stack.empty() && !num2Stack.empty()){
+            int num=num1Stack.pop()+num2Stack.pop();
+            if(carry){
+                ++num;
+                carry=false;
+            }
+            if(num>9){
+                num%=10;
+                carry=true;
+            }
+            resStack.push(num);
+        }
+
+        while(!num1Stack.empty()){
+            int num=num1Stack.pop();
+            if(carry){
+                ++num;
+                carry=false;
+            }
+            if(num>9){
+                num%=10;
+                carry=true;
+            }
+            resStack.push(num);
+        }
+
+        while(!num2Stack.empty()){
+            int num=num2Stack.pop();
+            if(carry){
+                ++num;
+                carry=false;
+            }
+            if(num>9){
+                num%=10;
+                carry=true;
+            }
+            resStack.push(num);
+        }
+
+        if(carry){
+            resStack.push(1);
+            carry=false;
+        }
+
+        ListNode res=new ListNode();
+        ListNode p=res;
+        while(!resStack.empty()){
+            p.next=new ListNode(resStack.pop());
+            p=p.next;
+        }
+        return res.next;
+    
+    }
+}
+```
+
+优化版：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode addTwoNumbers(ListNode l1, ListNode l2) {
+        Stack<Integer> num1Stack=new Stack<>();
+        Stack<Integer> num2Stack=new Stack<>();
+
+        while(l1!=null || l2!=null){
+            if(l1!=null){
+                num1Stack.push(l1.val);
+                l1=l1.next;
+            }
+            if(l2!=null){
+                num2Stack.push(l2.val);
+                l2=l2.next;
+            }
+        }
+
+        ListNode res=new ListNode();
+
+        boolean carry=false;
+        while(!num1Stack.empty() || !num2Stack.empty()){
+            int num1=0,num2=0;
+            if(!num1Stack.empty()) num1=num1Stack.pop();
+            if(!num2Stack.empty()) num2=num2Stack.pop();
+            int num=num1+num2;
+            if(carry){
+                ++num;
+                carry=false;
+            }
+            if(num>9){
+                num%=10;
+                carry=true;
+            }
+
+            ListNode node=new ListNode(num);
+            node.next=res.next;
+            res.next=node;
+        }
+
+        if(carry){
+            ListNode node=new ListNode(1);
+            node.next=res.next;
+            res.next=node;
+        }
+
+        return res.next;
+    }
+}
+```
+
+## [856. 括号的分数](https://leetcode-cn.com/problems/score-of-parentheses/)
+
+```java
+class Solution {
+    public int scoreOfParentheses(String s) {
+        Stack<Integer> stack=new Stack<>();
+        stack.push(0);
+        for(char c:s.toCharArray()){
+            if(c=='('){
+                stack.push(0);
+            }else{
+                int depth=stack.pop();
+                if(depth==0){
+                    stack.push(stack.pop()+1);
+                }else{
+                    stack.push(stack.pop()+depth*2);
+                }
+            }
+        }
+        return stack.pop();
+    }
+}
+```
+
+## [1249. 移除无效的括号](https://leetcode-cn.com/problems/minimum-remove-to-make-valid-parentheses/)
+
+```java
+class Solution {
+    public String minRemoveToMakeValid(String s) {
+        Stack<Integer> stack=new Stack<>();
+        int i=0;
+        while(i<s.length()){
+            if(s.charAt(i)=='('){
+                stack.push(i);
+                i++;
+            }else if(s.charAt(i)==')'){
+                if(stack.empty()){
+                    s=removeCharAt(s,i);
+                }else{
+                    stack.pop();
+                    i++;
+                }
+            }else{
+                i++;
+            }
+        }
+
+        while(!stack.empty()){
+            s=removeCharAt(s,stack.pop());
+        }
+        return s;
+    }
+    
+    public String removeCharAt(String str,int index){
+        return str.substring(0,index)+str.substring(index+1);
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public String minRemoveToMakeValid(String s) {
+        StringBuilder res=new StringBuilder(s);
+        
+        Stack<Integer> stack=new Stack<>();
+        int i=0;
+        while(i<res.length()){
+            if(res.charAt(i)=='('){
+                stack.push(i);
+                i++;
+            }else if(res.charAt(i)==')'){
+                if(stack.empty()){
+                    res.deleteCharAt(i);
+                }else{
+                    stack.pop();
+                    i++;
+                }
+            }else{
+                i++;
+            }
+        }
+
+        while(!stack.empty()){
+            res.deleteCharAt(stack.pop());
+        }
+        return res.toString();
+    }
+}
+```
+
+## [636. 函数的独占时间](https://leetcode-cn.com/problems/exclusive-time-of-functions/)
+
+```java
+class Solution {
+    public int[] exclusiveTime(int n, List<String> logs) {
+        int[] res=new int[n];
+
+        //栈数据： int[3]    0-id    1-start    2-rest(中途休息时间)
+        Stack<int[]> stack=new Stack<>();
+        for (String log : logs) {
+            String[] logInfo = log.split(":");
+            if(logInfo[1].equals("start")){
+                int[] data=new int[3];
+                data[0]=Integer.parseInt(logInfo[0]);
+                data[1]=Integer.parseInt(logInfo[2]);
+                stack.push(data);
+            }else{
+                int[] data = stack.pop();
+                int runTime=Integer.parseInt(logInfo[2])-data[1]-data[2]+1;
+                res[data[0]]+=runTime;
+                if(!stack.empty()){
+                    int[] parentData = stack.pop();
+                    parentData[2]+=(Integer.parseInt(logInfo[2])-data[1]+1);
+                    stack.push(parentData);
+                }
+            }
+        }
+        return res;
+
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public int[] exclusiveTime(int n, List<String> logs) {
+        int[] res=new int[n];
+
+        //栈数据： int[2]    0-start    1-rest(中途休息时间)   
+        Stack<int[]> stack=new Stack<>();
+        for (String log : logs) {
+            String[] logInfo = log.split(":");
+            if(logInfo[1].equals("start")){
+                int[] data=new int[2];
+                data[0]=Integer.parseInt(logInfo[2]);
+                stack.push(data);
+            }else{
+                int[] data = stack.pop();
+                int runTime=Integer.parseInt(logInfo[2])-data[0]-data[1]+1;
+                res[Integer.parseInt(logInfo[0])]+=runTime;
+                if(!stack.empty()){
+                    int[] parentData = stack.pop();
+                    parentData[1]+=(Integer.parseInt(logInfo[2])-data[0]+1);
+                    stack.push(parentData);
+                }
+            }
+        }
+        return res;
+    }
+}
+```
+
+## [402. 移掉 K 位数字](https://leetcode-cn.com/problems/remove-k-digits/)
+
+方法一：从左到右，当当前的数比后一个数大时，删去当前的数，删去后要保证是正确的数字。遍历k次
+
+```java
+class Solution {
+    public String removeKdigits(String num, int k) {
+        StringBuilder res=new StringBuilder(num);
+        while(k>0 && res.length()>0){
+            int i=0;
+            for(;i<res.length()-1;i++){
+                if(res.charAt(i)>res.charAt(i+1)){
+                    break;
+                }
+            }
+            res.deleteCharAt(i);
+            i=0;
+            while(i<res.length() && res.charAt(i)=='0'){
+                res.deleteCharAt(i);
+            }
+            k--;
+        }
+
+        return res.length()>0? res.toString():"0";
+
+    }
+}
+```
+
+## [1475. 商品折扣后的最终价格](https://leetcode-cn.com/problems/final-prices-with-a-special-discount-in-a-shop/)
+
+方法一：暴力
+
+```java
+class Solution {
+    public int[] finalPrices(int[] prices) {
+        for(int i=0;i<prices.length;i++){
+            for(int j=i+1;j<prices.length;j++){
+                if(prices[j]<=prices[i]){
+                    prices[i]-=prices[j];
+                    break;
+                }
+            }
+        }
+        return prices;
+    }
+}
+```
+
+## [225. 用队列实现栈](https://leetcode-cn.com/problems/implement-stack-using-queues/)
+
+方法一：两个队列
+
+```java
+class MyStack {
+
+    private Queue<Integer> mainQueue,helperQueue;
+
+    /** Initialize your data structure here. */
+    public MyStack() {
+        mainQueue=new LinkedList<>();
+        helperQueue=new LinkedList<>();
+    }
+    
+    /** Push element x onto stack. */
+    public void push(int x) {
+        while(!mainQueue.isEmpty()){
+            helperQueue.offer(mainQueue.poll());
+        }
+        mainQueue.add(x);
+        while(!helperQueue.isEmpty()){
+            mainQueue.offer(helperQueue.poll());
+        }
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    public int pop() {
+        return mainQueue.poll();
+    }
+    
+    /** Get the top element. */
+    public int top() {
+        return mainQueue.peek();
+    }
+    
+    /** Returns whether the stack is empty. */
+    public boolean empty() {
+        return mainQueue.isEmpty();
+    }
+}
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack obj = new MyStack();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.top();
+ * boolean param_4 = obj.empty();
+ */
+```
+
+方法二：一个队列
+
+```java
+class MyStack {
+
+    private Queue<Integer> mainQueue;
+
+    /** Initialize your data structure here. */
+    public MyStack() {
+        mainQueue=new LinkedList<>();
+    }
+    
+    /** Push element x onto stack. */
+    public void push(int x) {
+        mainQueue.offer(x);
+        int n=mainQueue.size()-1;
+        while(n-->0){
+            mainQueue.offer(mainQueue.poll());
+        }
+    }
+    
+    /** Removes the element on top of the stack and returns that element. */
+    public int pop() {
+        return mainQueue.poll();
+    }
+    
+    /** Get the top element. */
+    public int top() {
+        return mainQueue.peek();
+    }
+    
+    /** Returns whether the stack is empty. */
+    public boolean empty() {
+        return mainQueue.isEmpty();
+    }
+}
+
+/**
+ * Your MyStack object will be instantiated and called as such:
+ * MyStack obj = new MyStack();
+ * obj.push(x);
+ * int param_2 = obj.pop();
+ * int param_3 = obj.top();
+ * boolean param_4 = obj.empty();
+ */
+```
+
+## [682. 棒球比赛](https://leetcode-cn.com/problems/baseball-game/)
+
+```java
+class Solution {
+    public int calPoints(String[] ops) {
+        int point=0;
+        Stack<Integer> stack=new Stack<>();
+        for(String op:ops){
+            if(op.equals("+")){
+                int p1=stack.pop();
+                int p2=stack.pop();
+                stack.push(p2);
+                stack.push(p1);
+                int p=p1+p2;
+                point+=p;
+                stack.push(p);
+            }else if(op.equals("D")){
+                int p=stack.peek()*2;
+                point+=p;
+                stack.push(p);
+            }else if(op.equals("C")){
+                point-=stack.pop();
+            }else{
+                int p=Integer.parseInt(op);
+                point+=p;
+                stack.push(p);
+            }
+        }
+        return point;
+    }
+}
+```
+
+## [388. 文件的最长绝对路径](https://leetcode-cn.com/problems/longest-absolute-file-path/)
+
+```java
+class Solution {
+    public int lengthLongestPath(String input) {
+        int len=0;
+        int maxLen=0;
+        Stack<Integer> stack=new Stack<>();
+        String[] inputStrs=input.split("\n");
+
+        for(String str:inputStrs){
+            int tabNum=countTab(str);
+            while(!stack.empty() && stack.size()>tabNum){
+                len-=stack.pop();
+            }
+            stack.push(str.length()-tabNum+1);
+            len+=(str.length()-tabNum+1);
+            if(str.contains(".")){
+                if(len-1>maxLen){
+                    maxLen=len-1;
+                }
+            }
+        }
+        return maxLen;
+    }
+
+    public int countTab(String str){
+        int count=0;
+        StringBuilder sb=new StringBuilder("\t");
+        while(str.startsWith(sb.toString())){
+            count++;
+            sb.append("\t");
+        }
+        return count;
+    }
+}
+```
+
+## [1653. 使字符串平衡的最少删除次数](https://leetcode-cn.com/problems/minimum-deletions-to-make-string-balanced/)
+
+```java
+class Solution {
+    public int minimumDeletions(String s) {
+        int bNum=0,dp=0;
+        for(int i=0;i<s.length();i++){
+            if(s.charAt(i)=='a'){
+                dp=Math.min(dp+1,bNum);
+            }
+            if(s.charAt(i)=='b'){
+                bNum++;
+            }
+        }
+        return dp;
+    }
+}
+```
+
+## [946. 验证栈序列](https://leetcode-cn.com/problems/validate-stack-sequences/)
+
+```java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        
+        Stack<Integer> pushStack=new Stack<>();
+        int pushIndex=0;
+        int popIndex=0;
+        while(pushIndex<pushed.length){
+            pushStack.push(pushed[pushIndex++]);
+            
+            while(!pushStack.isEmpty() && pushStack.peek()==popped[popIndex]){
+                pushStack.pop();
+                popIndex++;
+            }
+            
+        }
+        return pushStack.isEmpty();
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public boolean validateStackSequences(int[] pushed, int[] popped) {
+        
+        Stack<Integer> pushStack=new Stack<>();
+        int popIndex=0;
+        for(int p : pushed){
+            pushStack.push(p);
+            
+            while(!pushStack.isEmpty() && pushStack.peek()==popped[popIndex]){
+                pushStack.pop();
+                ++popIndex;
+            }
+            
+        }
+        return pushStack.isEmpty();
+    }
+}
+```
+
+## [678. 有效的括号字符串](https://leetcode-cn.com/problems/valid-parenthesis-string/)
+
+```java
+class Solution {
+    public boolean checkValidString(String s) {
+        Stack<Integer> left=new Stack<>();
+        Stack<Integer> star=new Stack<>();
+        int i=0;
+        for(char c:s.toCharArray()){
+            if(c=='('){
+                left.push(i++);
+                continue;
+            }
+            if(c=='*'){
+                star.push(i++);
+                continue;
+            }
+            if(c==')'){
+                if(!left.isEmpty()){
+                    left.pop();
+                }else if(!star.isEmpty()){
+                    star.pop();
+                }else{
+                    return false;
+                }                
+                i++;
+            }                       
+        }
+        
+        while(!left.isEmpty() && !star.isEmpty()){
+            int l=left.pop();
+            int st=star.pop();
+            if(l>st){
+                return false;
+            }
+            
+        }
+        return left.isEmpty();
+    }
+}
+```
+
+## [1963. 使字符串平衡的最小交换次数](https://leetcode-cn.com/problems/minimum-number-of-swaps-to-make-the-string-balanced/)
+
+方法：把匹配的全都消了，剩下的必然是 k 个 `]` 加 k 个 `[`，k 为偶数时，交换 k/2 次就能组成 k/2 个 `[]`，k 为奇数时，把左右两端交换后剩下 k-1 个 `]` 加 k-1 个 `[`，再按照偶数来算，最后交换 1 + (k-1)/ 2 次组成 `[[][]...[][]]`
+
+```java
+class Solution {
+    public int minSwaps(String s) {
+        int balance=0;
+        Stack<Character> stack=new Stack<>();
+        for (char c : s.toCharArray()) {
+            if(c=='['){
+                stack.push(c);
+            }else{
+                if(!stack.empty()){
+                    stack.pop();
+                    balance+=2;
+                }
+            }
+        }
+        int unbalance=(s.length()-balance)/2;
+        if(unbalance%2==0){
+            return unbalance/2;
+        }else{
+            return 1+(unbalance-1)/2;
+        }
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public int minSwaps(String s) {
+        int balance=0;
+        Stack<Character> stack=new Stack<>();
+        for (char c : s.toCharArray()) {
+            if(c=='['){
+                stack.push(c);
+            }else{
+                if(!stack.empty()){
+                    stack.pop();
+                    ++balance;
+                }
+            }
+        }
+        int unbalance=s.length()/2-balance;
+        return unbalance%2==0? (unbalance/2):(1+(unbalance-1)/2);
+    }
+}
+```
+
+空间优化：
+
+```java
+class Solution {
+    public int minSwaps(String s) {
+        int balance=0;
+        int left=0;
+        for (char c : s.toCharArray()) {
+            if(c=='['){
+                left++;
+            }else{
+                if(left>0){
+                    --left;
+                    ++balance;
+                }
+            }
+        }
+        int unbalance=s.length()/2-balance;
+        return unbalance%2==0? (unbalance/2):(1+(unbalance-1)/2);
+    }
+}
+```
 
 
 
@@ -6114,11 +7411,303 @@ class Solution {
 }
 ```
 
+## [551. 学生出勤记录 I](https://leetcode-cn.com/problems/student-attendance-record-i/)
+
+```java
+class Solution {
+    public boolean checkRecord(String s) {
+        int absentNum=0;
+        int lateNum=0;
+        for(char c:s.toCharArray()){
+            if(c=='A'){
+                lateNum=0;
+                if(++absentNum>1){
+                    return false;
+                }
+            }else if(c=='L'){
+                if(++lateNum>=3){
+                    return false;
+                }
+            }else{
+                lateNum=0;
+            }
+        }
+        return true;
+    }
+}
+```
+
+## [1221. 分割平衡字符串](https://leetcode-cn.com/problems/split-a-string-in-balanced-strings/)
+
+```java
+class Solution {
+    public int balancedStringSplit(String s) {
+        int num=0;
+        int left=0,right=0;
+        for(int i=0;i<s.length();i++){
+            if(s.charAt(i)=='L'){
+                left++;
+            }
+            if(s.charAt(i)=='R'){
+                right++;     
+            }
+            if(left==right){
+                num++;
+                left=0;
+                right=0;
+            }
+        }
+        return num;
+    }
+}
+```
+
+## [647. 回文子串](https://leetcode-cn.com/problems/palindromic-substrings/)
+
+方法一：暴力
+
+```java
+class Solution {
+    public int countSubstrings(String s) {
+        int num=0;
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            num+=countSubstringsHelper(chars,i);
+        }
+        return num;
+    }
+
+    public int countSubstringsHelper(char[] charArray,int from){
+        int num=0;
+        int i=from;
+        while(i<charArray.length){
+            int start=from,end=i;
+            boolean flag=true;
+            while(start<end){
+                if(charArray[start]!=charArray[end]){
+                    flag=false;
+                    break;
+                }
+                ++start;
+                --end;
+            }
+            if(flag) ++num;
+            i++;
+        }
+        return num;
+    }
+}
+```
+
+方法二：中心扩展法
+
+```java
+class Solution {
+    public int countSubstrings(String s) {
+        int count=0;
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            int n=1;
+            int left=i-1,right=i+1;
+            while(left>=0 && right<chars.length){
+                if(chars[left]==chars[right]){
+                    ++n;
+                    --left;
+                    ++right;
+                }else{
+                    break;
+                }
+            }
+            count+=n;
+        }
+
+        for(int i=0;i<chars.length-1;i++){
+            int n=0;
+            if(chars[i]==chars[i+1]){
+                ++n;
+                int left=i-1,right=i+2;
+                while(left>=0 && right<chars.length){
+                    if(chars[left]==chars[right]){
+                        ++n;
+                        --left;
+                        ++right;
+                    }else{
+                        break;
+                    }
+                }
+            }
+            count+=n;
+        }
+        return count;
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public int countSubstrings(String s) {
+        int count=0;
+        char[] chars = s.toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            int n=1;
+            int left=i-1,right=i+1;
+            while(left>=0 && right<chars.length){
+                if(chars[left]==chars[right]){
+                    ++n;
+                    --left;
+                    ++right;
+                }else{
+                    break;
+                }
+            }
+            
+            if(i<chars.length-1 && chars[i]==chars[i+1]){
+                ++n;
+                left=i-1;
+                right=i+2;
+                while(left>=0 && right<chars.length){
+                    if(chars[left]==chars[right]){
+                        ++n;
+                        --left;
+                        ++right;
+                    }else{
+                        break;
+                    }
+                }
+            }
+            count+=n;
+        }
+        return count;
+    }
+}
+```
+
+## [482. 密钥格式化](https://leetcode-cn.com/problems/license-key-formatting/)
+
+方法一
+
+```java
+class Solution {
+    public String licenseKeyFormatting(String s, int k) {
+        s=s.toUpperCase().replaceAll("-","");
+        StringBuilder sb=new StringBuilder(s);
+        for(int i=sb.length()-k;i>0;i-=k){
+            sb.insert(i,'-');
+        }
+        return sb.toString();
+    }
+}
+```
+
+方法二：
+
+```java
+class Solution {
+    public String licenseKeyFormatting(String s, int k) {
+        StringBuilder sb=new StringBuilder();
+        for(int i=s.length()-1,len=0;i>=0;--i){
+            if(s.charAt(i)=='-') continue;
+            sb.append(s.charAt(i));
+            if(++len%k==0){
+                sb.append('-');
+            }
+        }
+        if(sb.length()>0 && sb.charAt(sb.length()-1)=='-') sb.deleteCharAt(sb.length()-1);
+        return sb.reverse().toString().toUpperCase();
+    }
+}
+```
+
+## [5. 最长回文子串](https://leetcode-cn.com/problems/longest-palindromic-substring/)
+
+方法：扩展中心法
+
+```java
+class Solution {
+    public String longestPalindrome(String s) {
+        if(s.length()==0) return "";
+        int start=0,end=1;
+        for(int i=0;i<s.length();i++){
+            int left=i-1,right=i+1;
+            if(left>=0 && right<s.length()) {
+                while(s.charAt(left) == s.charAt(right)){
+                    if((right-left+1)>(end-start)){
+                        start=left;
+                        end=right+1;
+                    }
+                    if(--left<0) break;
+                    if(++right>=s.length()) break;
+                }
+            }
+
+            if(i+1<s.length() && s.charAt(i)==s.charAt(i+1)){
+                if((end-start)<2){
+                    start=i;
+                    end=i+2;
+                }
+                left=i-1;
+                right=i+2;
+                if(left<0 || right>=s.length()) continue;
+                while(s.charAt(left) == s.charAt(right)){
+                    if((right-left+1)>(end-start)){
+                        start=left;
+                        end=right+1;
+                    }
+                    if(--left<0) break;
+                    if(++right>=s.length()) break;
+                }
+            }
+        }
+
+        return s.substring(start,end);
+    }
+}
+```
+
+
+
 
 
 
 
 # 回溯法
+
+## [77. 组合](https://leetcode-cn.com/problems/combinations/)
+
+```java
+class Solution {
+    public List<List<Integer>> combine(int n, int k) {
+        List<List<Integer>> res=new ArrayList<>();
+        combineHelper(res,n,k,new ArrayList<>());
+        return res;
+    }
+
+    public void combineHelper(List<List<Integer>> res,int n,int k,List<Integer> array){
+        if(array.size()==k){
+            res.add(array);
+            return ;
+        }
+        int i=1;
+        if(!array.isEmpty()){
+            i=array.get(array.size()-1)+1;
+        }
+        while(i<=n){
+            List<Integer> newArray=new ArrayList<>(array);
+            newArray.add(i);
+            combineHelper(res,n,k,newArray);
+            i++;
+        }
+    }
+}
+```
+
+
+
+
+
+
 
 ## [39. 组合总和](https://leetcode-cn.com/problems/combination-sum/)
 
@@ -6221,7 +7810,33 @@ class Solution {
 }
 ```
 
+## [216. 组合总和 III](https://leetcode-cn.com/problems/combination-sum-iii/)
 
+```java
+class Solution {
+    public List<List<Integer>> combinationSum3(int k, int n) {
+        List<List<Integer>> res=new ArrayList<>();
+        combinationSum3Helper(res,new ArrayList<>(),1,k,n);
+        return res;
+    }
+
+    public void combinationSum3Helper(List<List<Integer>> res,List<Integer> array,int num,int k,int remain){
+        if(k==0){
+            if(remain==0) {
+                res.add(array);
+            }
+            return ;
+        }
+        if(remain<=0) return;
+
+        for(int i=num;i<10;i++){
+            List<Integer> newArray=new ArrayList<>(array);
+            newArray.add(i);
+            combinationSum3Helper(res,newArray,i+1,k-1,remain-i);
+        }
+    }
+}
+```
 
 
 
@@ -6523,6 +8138,301 @@ class Solution {
     }
 }
 ```
+
+## [17. 电话号码的字母组合](https://leetcode-cn.com/problems/letter-combinations-of-a-phone-number/)
+
+方法：哈希集+回溯
+
+![image-20210830203441570](D:\blog\source\_drafts\leetcode刷题\10.png)
+
+```java
+class Solution {
+    public List<String> letterCombinations(String digits) {
+        List<String> res=new ArrayList<>();
+        Map<Character,String> dataMap=new HashMap<>();
+        dataMap.put('2',"abc");
+        dataMap.put('3',"def");
+        dataMap.put('4',"ghi");
+        dataMap.put('5',"jkl");
+        dataMap.put('6',"mno");
+        dataMap.put('7',"pqrs");
+        dataMap.put('8',"tuv");
+        dataMap.put('9',"wxyz");
+        
+        letterCombinationsHelper(res,dataMap,digits,0,new StringBuffer());
+        return res;
+    }
+
+    public void letterCombinationsHelper(List<String> res,Map<Character,String> dataMap,String digits,int index,StringBuffer stringBuffer){
+        if(digits.length()==index){
+            if(stringBuffer.length()>0){
+                res.add(stringBuffer.toString());
+            }
+            return;
+        }
+        String keyData = dataMap.get(digits.charAt(index));
+        for (char c : keyData.toCharArray()) {
+            letterCombinationsHelper(res,dataMap,digits,index+1,stringBuffer.append(c));
+            stringBuffer.deleteCharAt(stringBuffer.length()-1);
+        }
+    
+    }
+}
+```
+
+## [46. 全排列](https://leetcode-cn.com/problems/permutations/)
+
+```java
+class Solution {
+    public List<List<Integer>> permute(int[] nums) {
+        List<Integer> numList=new ArrayList<>();
+        for (int num : nums) {
+            numList.add(num);
+        }
+        List<List<Integer>> res=new ArrayList<>();
+        premuteHelper(numList,res,new ArrayList<>());
+        return res;
+    }
+
+    public void premuteHelper(List<Integer> numList,List<List<Integer>> res,List<Integer> array){
+        if(numList.isEmpty()){
+            res.add(array);
+            return ;
+        }
+
+        int size=numList.size();
+        for(int i=0;i<size;i++){
+            Integer node=numList.get(i);
+            List<Integer> newArray=new ArrayList<>(array);
+            newArray.add(node);
+            numList.remove(node);
+            premuteHelper(numList,res,newArray);
+            numList.add(i,node);
+        }
+
+    }
+}
+```
+
+## [47. 全排列 II](https://leetcode-cn.com/problems/permutations-ii/)
+
+```java
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> res=new ArrayList<>();
+        // numList[0]: nums    numList[1]: 使用情况,0-未使用;  1-已使用
+        int[][] numList=new int[2][nums.length];
+        Arrays.sort(nums);
+        numList[0]=nums;
+        permuteUniqueHelper(res,numList,new ArrayList<>());
+        return res;
+    }
+
+    public void permuteUniqueHelper(List<List<Integer>> res,int[][] numList,List<Integer> array){
+        if(array.size()==numList[0].length){
+            res.add(array);
+            return ;
+        }
+        for(int i=0;i<numList[0].length;i++){
+            if(numList[1][i]==1){
+                continue;
+            }
+            if(i+1<numList[0].length && numList[0][i]==numList[0][i+1] && numList[1][i]!=numList[1][i+1]){
+                continue;
+            }
+
+            List<Integer> newArray=new ArrayList<>(array);
+            newArray.add(numList[0][i]);
+            numList[1][i]=1;
+            permuteUniqueHelper(res,numList,newArray);
+            numList[1][i]=0;
+        }
+    }
+
+}
+```
+
+优化：
+
+```java
+class Solution {
+    public List<List<Integer>> permuteUnique(int[] nums) {
+        List<List<Integer>> res=new ArrayList<>();
+        boolean[] useInfo=new boolean[nums.length];
+        Arrays.sort(nums);
+        permuteUniqueHelper(res,nums,useInfo,new ArrayList<>());
+        return res;
+    }
+
+    public void permuteUniqueHelper(List<List<Integer>> res,int[] nums,boolean[] useInfo,List<Integer> array){
+        if(array.size()==nums.length){
+            res.add(array);
+            return ;
+        }
+        for(int i=0;i<nums.length;i++){
+            if(useInfo[i] || i>0 && nums[i]==nums[i-1] && !useInfo[i-1]){
+                continue;
+            }
+          
+
+            List<Integer> newArray=new ArrayList<>(array);
+            newArray.add(nums[i]);
+            useInfo[i]=true;
+            permuteUniqueHelper(res,nums,useInfo,newArray);
+            useInfo[i]=false;
+        }
+    }
+}
+```
+
+## [93. 复原 IP 地址](https://leetcode-cn.com/problems/restore-ip-addresses/)
+
+```java
+class Solution {
+    public List<String> restoreIpAddresses(String s) {
+        List<String> res=new ArrayList<>();
+        restoreIpAddressesHelper(res,s.toCharArray(),0,0,new StringBuilder());
+        return res;
+    }
+
+    public void restoreIpAddressesHelper(List<String> res,char[] ipArray,int index,int deep,StringBuilder ipBuilder){
+        if(deep==4){
+
+            if(index==ipArray.length){
+                ipBuilder.deleteCharAt(ipBuilder.length()-1);
+                res.add(ipBuilder.toString());
+            }
+            return;
+        }
+
+        if(index>=ipArray.length) return ;
+
+        if(ipArray[index]=='0'){
+            restoreIpAddressesHelper(res,ipArray,index+1,deep+1,new StringBuilder(ipBuilder).append("0."));
+        }else{
+            List<String> ipNums=new ArrayList<>();
+            int i=1;
+            while(index+i<=ipArray.length && i<=3){
+                char[] numChars = Arrays.copyOfRange(ipArray, index, index + i);
+                int num=0;
+                for(char n:numChars){
+                    num=num*10+(n-'0');
+                }
+                if(num<=255){
+                    ipNums.add(num+"");
+                }
+                i++;
+            }
+            for (String ipNum : ipNums) {
+                restoreIpAddressesHelper(res,ipArray,index+ipNum.length(),deep+1,new StringBuilder(ipBuilder).append(ipNum+"."));
+            }
+        }
+    
+    }
+}
+```
+
+## [131. 分割回文串](https://leetcode-cn.com/problems/palindrome-partitioning/)
+
+方法：画图
+
+![image-20210925201004969](D:\blog\source\_drafts\leetcode刷题\11.png)
+
+```java
+class Solution {
+    public List<List<String>> partition(String s) {
+        List<List<String>> res=new ArrayList<>();
+        partitionHelper(res,new ArrayList<String>(),s.toCharArray(),0);
+        return res;
+    }
+
+    public void partitionHelper(List<List<String>> res,List<String> partition,char[] charArray,int from){
+        if(from == charArray.length){
+            res.add(partition);
+            return;
+        }
+        List<String> palindromes = findPalindrome(charArray, from);
+        for (String palindrome : palindromes) {
+            List<String> newPartition=new ArrayList<>(partition);
+            newPartition.add(palindrome);
+            partitionHelper(res,newPartition,charArray,from+palindrome.length());
+        }
+    }
+
+    public List<String> findPalindrome(char[] charArray,int from){
+        List<String> palindromes=new ArrayList<>();
+        int i=from;
+        while(i < charArray.length){
+            boolean flag=true;
+            int start=from,end=i;
+            while(start<end){
+                if(charArray[start]!=charArray[end]){
+                    flag=false;
+                    break;
+                }
+                ++start;
+                --end;
+            }
+            if(flag){
+                palindromes.add(new String(charArray,from,i-from+1));
+            }
+            ++i;
+        }
+        return palindromes;
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+
+    private List<List<String>> res;
+    public List<List<String>> partition(String s) {
+        res=new ArrayList<>();
+        partitionHelper(new ArrayList<String>(),s.toCharArray(),0);
+        return res;
+    }
+
+    public void partitionHelper(List<String> partition,char[] charArray,int from){
+        if(from == charArray.length){
+            res.add(new ArrayList<>(partition));
+            return;
+        }
+        List<String> palindromes = findPalindrome(charArray, from);
+        for (String palindrome : palindromes) {
+            partition.add(palindrome);
+            partitionHelper(partition,charArray,from+palindrome.length());
+            partition.remove(partition.size()-1);
+        }
+    }
+
+    public List<String> findPalindrome(char[] charArray,int from){
+        List<String> palindromes=new ArrayList<>();
+        int i=from;
+        while(i < charArray.length){
+            boolean flag=true;
+            int start=from,end=i;
+            while(start<end){
+                if(charArray[start]!=charArray[end]){
+                    flag=false;
+                    break;
+                }
+                ++start;
+                --end;
+            }
+            if(flag){
+                palindromes.add(new String(charArray,from,i-from+1));
+            }
+            ++i;
+        }
+        return palindromes;
+    }
+}
+```
+
+
 
 
 
@@ -6890,6 +8800,343 @@ class Solution {
 }
 ```
 
+## [1588. 所有奇数长度子数组的和](https://leetcode-cn.com/problems/sum-of-all-odd-length-subarrays/)
+
+方法一：暴力
+
+```java
+class Solution {
+    public int sumOddLengthSubarrays(int[] arr) {
+        int res=0;
+        for(int i=0;i<arr.length;i++){
+            int num=arr[i];
+            for(int j=i+1;j<arr.length;j++){
+                if((j-i)%2==0){
+                    for(int r=i;r<=j;r++){
+                        num+=arr[r];
+                    }
+                }
+            }
+            res+=num;
+        }
+        return res;
+    }
+}
+```
+
+## [165. 比较版本号](https://leetcode-cn.com/problems/compare-version-numbers/)
+
+```java
+class Solution {
+    public int compareVersion(String version1, String version2) {
+        String[] versionList1 = version1.split("\\.");
+        String[] versionList2 = version2.split("\\.");
+        for(int i=0,j=0;i<versionList1.length || j<versionList2.length;){
+            int v1=0,v2=0;
+            if(i<versionList1.length){
+                v1=Integer.parseInt(versionList1[i++]);
+            }
+            if(j< versionList2.length){
+                v2=Integer.parseInt(versionList2[j++]);
+            }
+            if(v1>v2) return 1;
+            if(v1<v2) return -1;
+        }
+        return 0;
+    }
+}
+```
+
+优化空间复杂度：
+
+```java
+class Solution {
+    public int compareVersion(String version1, String version2) {
+        for(int i=0,j=0;i<version1.length() || j<version2.length();++i,++j){
+            int v1=0,v2=0;
+            while(i<version1.length() && version1.charAt(i)!='.'){
+                v1=v1*10+(version1.charAt(i++)-'0');
+            }
+            while(j<version2.length() && version2.charAt(j)!='.'){
+                v2=v2*10+(version2.charAt(j++)-'0');
+            }
+            if(v1>v2) return 1;
+            if(v1<v2) return -1;
+        }
+        return 0;
+    }
+}
+```
+
+## [面试题 17.14. 最小K个数](https://leetcode-cn.com/problems/smallest-k-lcci/)
+
+方法一：暴力法
+
+```java
+class Solution {
+    public int[] smallestK(int[] arr, int k) {
+        int[] res=new int[k];
+        if(k==0) return res;
+        
+        System.arraycopy(arr, 0, res, 0, k);
+        int maxIndex=findMaxIndex(res);
+        for(;k<arr.length;k++){
+            if(res[maxIndex]>arr[k]){
+                res[maxIndex]=arr[k];
+                maxIndex=findMaxIndex(res);
+            }
+        }
+        return res;
+    }
+
+    public int findMaxIndex(int[] arr){
+        int index=0;
+        for(int i=1;i<arr.length;i++){
+            if(arr[i]>arr[index]){
+                index=i;
+            }
+        }
+        return index;
+    }
+}
+```
+
+方法二：用堆
+
+```java
+class Solution {
+    public int[] smallestK(int[] arr, int k) {
+        int[] res=new int[k];
+        if(k==0) return res;
+
+        PriorityQueue<Integer> queue=new PriorityQueue<>(k,new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2-o1;
+            }
+        });
+        
+        for(int i=0;i<k;i++){
+            queue.offer(arr[i]);
+        }
+        
+        for(;k<arr.length;k++){
+            if(queue.peek()>arr[k]){
+                queue.poll();
+                queue.offer(arr[k]);
+            }
+        }
+        
+        for(int i=0;i<res.length;i++){
+            res[i]=queue.poll();
+        }
+        
+        return res;
+    }
+}
+```
+
+方法三：排序
+
+```java
+class Solution {
+    public int[] smallestK(int[] arr, int k) {
+        int[] res=new int[k];
+        if(k==0) return res;
+        Arrays.sort(arr);
+        System.arraycopy(arr,0,res,0,k);
+        return res;
+    }
+}
+```
+
+## [495. 提莫攻击](https://leetcode-cn.com/problems/teemo-attacking/)
+
+```java
+class Solution {
+    public int findPoisonedDuration(int[] timeSeries, int duration) {
+        if(timeSeries.length==0) return 0;
+
+        int res=duration;
+        int time=timeSeries[0]+duration;
+        for(int i=1;i<timeSeries.length;i++){
+            if(time<=timeSeries[i]){
+                res+=duration;                
+            }else{
+                res=res-(time-timeSeries[i])+duration;         
+            }
+            time=timeSeries[i]+duration;
+        }
+        return res;
+    }
+}
+```
+
+## [162. 寻找峰值](https://leetcode-cn.com/problems/find-peak-element/)
+
+```java
+class Solution {
+    public int findPeakElement(int[] nums) {
+        if(nums.length<2) return 0;
+
+        int i=0;
+        while(i+1<nums.length){
+            while(i+1<nums.length && nums[i]<nums[i+1]){
+                i++;
+            }
+            if(i+1<nums.length && nums[i]>nums[i+1]) return i;
+            i++;
+        }
+        return i-1;
+    }
+}
+```
+
+## [36. 有效的数独](https://leetcode-cn.com/problems/valid-sudoku/)
+
+```java
+class Solution {
+    public boolean isValidSudoku(char[][] board) {
+        int[][] map=new int[2][9];
+        int[][][] boxMap=new int[3][3][9];
+        // 行&列
+        for(int i=0;i<9;i++){
+            for(int j=0;j<9;j++){
+                // 行
+                if(board[i][j]!='.'){
+                    if(map[0][board[i][j]-'0'-1]>0) return false;
+                    map[0][board[i][j]-'0'-1]=1;
+                    
+                    if(boxMap[i/3][j/3][board[i][j]-'0'-1]>0) return false;
+                    boxMap[i/3][j/3][board[i][j]-'0'-1]=1;
+                }
+                //列
+                if(board[j][i]!='.'){
+                    if(map[1][board[j][i]-'0'-1]>0) return false;
+                    map[1][board[j][i]-'0'-1]=1;
+                }
+
+            }
+            Arrays.fill(map[0],0);
+            Arrays.fill(map[1],0);
+        }
+        
+        return true;
+    }
+}
+```
+
+## [1031. 两个非重叠子数组的最大和](https://leetcode-cn.com/problems/maximum-sum-of-two-non-overlapping-subarrays/)
+
+```java
+class Solution {
+    public int maxSumTwoNoOverlap(int[] nums, int firstLen, int secondLen) {
+        // 前缀和
+        int[] preSum=new int[nums.length+1];
+        for (int i = 0; i < nums.length; i++) {
+            preSum[i+1]=nums[i]+preSum[i];
+        }
+
+        // 使firstLen<secondLen
+        if(firstLen>secondLen){
+            int temp=firstLen;
+            firstLen=secondLen;
+            secondLen=temp;
+        }
+
+        // 假设firstLen<secondLen
+        // dp[0][0]:在分界线i中，前firstLen前缀和最大值
+        // dp[0][1]:在分界线i中，后secondLen前缀和最大值
+        // dp[1][0]:在分界线i中，前secondLen前缀和最大值
+        // dp[1][1]:在分界线i中，后firstLen前缀和最大值
+        int[][] dp=new int[2][2];
+
+        int res=0;
+
+        for(int i=firstLen;i<preSum.length;i++){
+
+            if(i+secondLen<preSum.length){
+                int firstSum=preSum[i]-preSum[i-firstLen];
+                if(firstSum>dp[0][0]){
+                    dp[0][0]=firstSum;
+                    dp[0][1]=0;
+                    for(int j=i;j+secondLen<preSum.length;j++){
+                        int secondSum=preSum[j+secondLen]-preSum[j];
+
+                        if(secondSum>dp[0][1]){
+                            dp[0][1]=secondSum;
+                        }
+                    }
+
+                    if(dp[0][0]+dp[0][1]>res){
+                        res=dp[0][0]+dp[0][1];
+                    }
+                }
+            }
+
+            if(i>=secondLen && i+firstLen< preSum.length){
+                int secondSum=preSum[i]-preSum[i-secondLen];
+                if(secondSum>dp[1][0]){
+                    dp[1][0]=secondSum;
+                    dp[1][1]=0;
+                    for(int j=i;j+firstLen<preSum.length;j++){
+                        int firstSum=preSum[j+firstLen]-preSum[j];
+                        if(firstSum>dp[1][1]){
+                            dp[1][1]=firstSum;
+                        }
+                    }
+
+                    if(dp[1][0]+dp[1][1]>res){
+                        res=dp[1][0]+dp[1][1];
+                    }
+                }
+            }
+
+        }
+        return res;
+    }
+}
+```
+
+## [31. 下一个排列](https://leetcode-cn.com/problems/next-permutation/)
+
+方法：https://leetcode-cn.com/problems/next-permutation/solution/xia-yi-ge-pai-lie-suan-fa-xiang-jie-si-lu-tui-dao-/
+
+```java
+class Solution {
+    public void nextPermutation(int[] nums) {
+        int i=nums.length-2,j=nums.length-1;
+        int k=j;
+        while(i>=0 && nums[i]>=nums[j]){
+            i--;
+            j--;
+        }
+        if(j==0){
+            reverse(nums,0,nums.length-1);
+        }else{
+            while(nums[i]>=nums[k]){
+                k--;
+            }
+            swap(nums,i,k);
+            reverse(nums,j,nums.length-1);
+        }
+    }
+
+    // 交换
+    public void swap(int[] nums,int i,int j){
+        int temp=nums[i];
+        nums[i]=nums[j];
+        nums[j]=temp;
+    }
+
+    // 反转数组
+    public void reverse(int[] nums,int from,int to){
+        while(from<to){
+            swap(nums,from++,to--);
+        }
+    }
+}
+```
 
 
 
@@ -7186,6 +9433,122 @@ class Solution {
     }
 }
 ```
+
+## [82. 删除排序链表中的重复元素 II](https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/)
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode res=new ListNode();
+        ListNode p=res;
+        while(head!=null){
+            if(head.next!=null){
+                if(head.val!=head.next.val){
+                    p.next=new ListNode(head.val);
+                    p=p.next;
+                }else{
+                    while(head.next!=null && head.val==head.next.val){
+                        head=head.next;
+                    }
+                }
+            }else{
+                p.next=new ListNode(head.val);
+            }
+            head=head.next;
+        }
+
+        return res.next;
+    }
+}
+```
+
+优化版：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode res=new ListNode();
+        ListNode p=res;
+        while(head!=null){
+            if(head.next!=null){
+                if(head.val!=head.next.val){
+                    p.next=head;
+                    p=p.next;
+                }else{
+                    while(head.next!=null && head.val==head.next.val){
+                        head=head.next;
+                    }
+                }
+            }else{
+                p.next=head;
+                p=p.next;
+            }
+            head=head.next;
+        }
+        p.next=null;
+        return res.next;
+    }
+}
+```
+
+代码优化：
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode res=new ListNode();
+        ListNode p=res;
+        while(head!=null){
+            if(head.next!=null && head.val==head.next.val){
+                while(head.next!=null && head.val==head.next.val){
+                    head=head.next;
+                }
+            }else{
+                p.next=head;
+                p=p.next;
+            }
+                
+            head=head.next;
+        }
+        p.next=null;
+        return res.next;
+    }
+}
+```
+
+
+
+
 
 ## [206. 反转链表](https://leetcode-cn.com/problems/reverse-linked-list/)
 
@@ -7910,7 +10273,86 @@ class Solution {
 }
 ```
 
+## [328. 奇偶链表](https://leetcode-cn.com/problems/odd-even-linked-list/)
 
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode oddEvenList(ListNode head) {
+        //奇数链表
+        ListNode oddList=new ListNode();
+        ListNode p1=oddList;
+        //偶数链表
+        ListNode evenList=new ListNode();
+        ListNode p2=evenList;
+        int i=1;
+        while(head!=null){
+            ListNode nextTemp=head.next;
+            if(i++%2==0){
+                p2.next=head;
+                p2=p2.next;
+                p2.next=null;
+            }else{
+                p1.next=head;
+                p1=p1.next;
+                p1.next=null;
+            }
+            head=nextTemp;
+        }
+        p1.next=evenList.next;
+        return oddList.next;
+    }
+}
+```
+
+## [1669. 合并两个链表](https://leetcode-cn.com/problems/merge-in-between-linked-lists/)
+
+```java
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode mergeInBetween(ListNode list1, int a, int b, ListNode list2) {
+        ListNode p1=list1,p2=list1;
+        ListNode p3=list2;
+        while(p3!=null && p3.next!=null){
+            p3=p3.next;
+        }
+
+        while(--a>0){
+            p1=p1.next;
+            p2=p2.next;
+            b--;
+        }
+
+        while(b>=0){
+            p2=p2.next;
+            b--;
+        }
+
+        p1.next=list2;
+        p3.next=p2;
+
+        return list1;
+    }
+}
+```
 
 
 
@@ -8534,4 +10976,51 @@ public int numberOfSubarrays2(int[] nums, int k) {
     return res;
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
+# 矩阵
+
+## [48. 旋转图像](https://leetcode-cn.com/problems/rotate-image/)
+
+<img src="D:\blog\source\_drafts\leetcode刷题\12.png" alt="image-20210928195459923" style="zoom:80%;" />
+
+```java
+class Solution {
+    public void rotate(int[][] matrix) {
+        int l=0,r=matrix.length-1;
+        while(l<r){
+            int[] temp=matrix[l];
+            matrix[l]=matrix[r];
+            matrix[r]=temp;
+            ++l;
+            --r;
+        }
+
+        for(l=0;l<matrix.length;++l){
+            r=l+1;
+            while(r<matrix.length){
+                int temp=matrix[l][r];
+                matrix[l][r]=matrix[r][l];
+                matrix[r][l]=temp;
+                ++r;
+            }
+        }
+    }
+}
+```
+
+
+
+
+
+
 
