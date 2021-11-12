@@ -4,7 +4,7 @@ comment: true
 date: 2021-08-26 20:47:47
 tags:
 categories:
-addrlink:就
+addrlink: 
 ---
 
 
@@ -163,6 +163,14 @@ Anaconda，就是一个Python环境的管理工具，通过它，可以切换多
    -r   删除requirement.txt文件下的所有依赖包
    -y   Don't ask for confirmation of uninstall deletions.
    ```
+
+9. 删除环境
+
+   ```bash
+   conda remove -n [环境名] --all
+   ```
+
+   
 
    
 

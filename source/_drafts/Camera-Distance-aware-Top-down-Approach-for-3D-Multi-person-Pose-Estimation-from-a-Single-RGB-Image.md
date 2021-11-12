@@ -1,5 +1,5 @@
 ---
-title: >Camera Distance-aware Top-down Approach for 3D Multi-person Pose Estimation from a Single RGB Image
+title: Camera Distance-aware Top-down Approach for 3D Multi-person Pose Estimation from a Single RGB Image
 comment: true
 date: 2021-08-27 20:14:22
 tags:

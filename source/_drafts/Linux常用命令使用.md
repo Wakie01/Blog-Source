@@ -229,6 +229,25 @@ mv * ../    # 移动当前目录所有文件到上一级目录
 mv /home/Download/Python3.9.0 /usr/local/python3      # 移动Download下的Python.3.9.0目录到python3中
 ```
 
+## 查找文件
+
+1. **locate命令**
+
+   该命令是从数据库中查找，对于一些新文件，可能查找不出来
+
+   ```bash
+   locate [文件名]
+   
+   # 比如
+   root@ubuntu:~# locate env_npu.sh
+   /home/wxx/modelzoo-master/built-in/PyTorch/Official/cv/image_classification/3D_ResNet_ID0421_for_PyTorch/env_npu.sh
+   /home/wxx/modelzoo-master/built-in/PyTorch/Official/cv/image_classification/CRNN_for_PyTorch/env_npu.sh
+   /home/wxx/modelzoo-master/built-in/PyTorch/Official/cv/image_classification/CRNN_for_PyTorch/test/env_npu.sh
+   /home/wxx/modelzoo-master/built-in/PyTorch/Official/cv/image_classification/DeepMar_for_PyTorch/env_npu.sh
+   ```
+
+   
+
 
 
 
@@ -851,7 +870,44 @@ wakie@ubuntu:~$ sudo du -h -d 1    # 等价于：wakie@ubuntu:~$ sudo du -h --ma
 
 
 
-# 其他
+# 系统
+
+## 查看系统信息
+
+```bash
+uname -a
+
+# 例子
+root@ubuntu:~# uname -a
+Linux ubuntu 4.15.0-29-generic #31-Ubuntu SMP Tue Jul 17 15:39:52 UTC 2018 x86_64 x86_64 x86_64 GNU/Linux
+```
+
+## 查看系统版本号
+
+```bash
+lsb_release -a
+
+# 例子
+root@ubuntu:~# lsb_release -a
+No LSB modules are available.
+Distributor ID: Ubuntu
+Description:    Ubuntu 18.04.1 LTS
+Release:        18.04
+Codename:       bionic
+```
+
+
+
+## 查看显卡信息
+
+```bash
+# nvidia 显卡
+nvidia-smi
+
+
+```
+
+
 
 
 

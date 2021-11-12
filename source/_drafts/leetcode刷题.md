@@ -3853,6 +3853,91 @@ class Solution {
 
 
 
+## [337. 打家劫舍 III](https://leetcode-cn.com/problems/house-robber-iii/)
+
+方法：https://leetcode-cn.com/problems/house-robber-iii/solution/san-chong-fang-fa-jie-jue-shu-xing-dong-tai-gui-hu/
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public int rob(TreeNode root) {
+        if(root==null) return 0;
+        int money1=root.val;
+        if(root.left!=null){
+            money1+=(rob(root.left.left)+rob(root.left.right));
+        }
+        if(root.right!=null){
+            money1+=(rob(root.right.left)+rob(root.right.right));
+        }
+        int money2=0;
+        money2+=(rob(root.left)+rob(root.right));
+        return Math.max(money1,money2);
+    }
+}
+```
+
+优化：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    private Map<TreeNode,Integer> map=new HashMap<>();
+
+    public int rob(TreeNode root) {
+        if (root == null) return 0;
+        if(map.containsKey(root)) return map.get(root);
+        
+        int money = root.val;
+        if (root.left != null) {
+            money += (rob(root.left.left) + rob(root.left.right));
+        }
+
+        if (root.right != null) {
+            money += (rob(root.right.left) + rob(root.right.right));
+        }
+
+        int maxMoney=Math.max(money, rob(root.left) + rob(root.right));
+        map.put(root,maxMoney);
+        return maxMoney;
+    }   
+}
+```
+
+
+
+
+
+
+
 ## [1137. 第 N 个泰波那契数](https://leetcode-cn.com/problems/n-th-tribonacci-number/)
 
 ```java
@@ -3899,8 +3984,6 @@ class Solution {
 ## [413. 等差数列划分](https://leetcode-cn.com/problems/arithmetic-slices/)
 
 方法一：废空间
-
-![image-20210810203900548](D:\blog\source\_drafts\JVM学习之Java内存区域与内存溢出异常\8.png)
 
 ```java
 class Solution {
@@ -3971,13 +4054,637 @@ class Solution {
 }
 ```
 
+## [62. 不同路径](https://leetcode-cn.com/problems/unique-paths/)
+
+方法一：超时
+
+```java
+class Solution {
+    private int path=0;
+    public int uniquePaths(int m, int n) {
+        if(m==1 && n==1){
+            ++path;
+        }else{
+            if(m>1) uniquePaths(m-1,n);
+            if(n>1) uniquePaths(m,n-1);
+        }
+        return path;
+    }
+}
+```
+
+方法二：动态规划
+
+第一排和第一列的都固定为一。
+
+```java
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[][] dp=new int[m][n];
+        for(int i=0;i<n;++i){
+            dp[0][i]=1;
+        }
+        for(int i=0;i<m;++i){
+            dp[i][0]=1;
+        }
+        for(int i=1;i<m;++i){
+            for(int j=1;j<n;++j){
+                dp[i][j]=dp[i-1][j]+dp[i][j-1];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+}
+```
+
+优化：模拟一下就知道了
+
+```java
+class Solution {
+    public int uniquePaths(int m, int n) {
+        int[] dp=new int[n];
+        Arrays.fill(dp,1);
+        for(int i=1;i<m;++i){
+            for(int j=1;j<n;++j){
+                dp[j]+=dp[j-1];
+            }
+        }
+        return dp[n-1];
+    }
+}
+```
+
+## [63. 不同路径 II](https://leetcode-cn.com/problems/unique-paths-ii/)
+
+```java
+class Solution {
+    public int uniquePathsWithObstacles(int[][] obstacleGrid) {
+        if(obstacleGrid[0][0]==1) return 0;
+        obstacleGrid[0][0]=1;
+        int i=1;
+        boolean flag=false;
+        while(i<obstacleGrid.length){
+            if(flag){
+                obstacleGrid[i][0]=0;
+            }else if(obstacleGrid[i][0]==0){
+                obstacleGrid[i][0]=1;
+            }else{
+                obstacleGrid[i][0]=0;
+                flag=true;
+            }
+            ++i;
+        }
+
+        i=1;
+        flag=false;
+        while(i<obstacleGrid[0].length){
+            if(flag){
+                obstacleGrid[0][i]=0;
+            }else if(obstacleGrid[0][i]==0){
+                obstacleGrid[0][i]=1;
+            }else{
+                obstacleGrid[0][i]=0;
+                flag=true;
+            }
+            ++i;
+        }
+
+        for(i=1;i<obstacleGrid.length;i++){
+            for(int j=1;j<obstacleGrid[0].length;j++){
+                if(obstacleGrid[i][j]==0){
+                    obstacleGrid[i][j]=obstacleGrid[i-1][j]+obstacleGrid[i][j-1];
+                }else{
+                    obstacleGrid[i][j]=0;
+                }
+            }
+        }
+
+        return obstacleGrid[obstacleGrid.length-1][obstacleGrid[0].length-1];
+    }
+}
+```
+
+
+
+
+
+## [64. 最小路径和](https://leetcode-cn.com/problems/minimum-path-sum/)
+
+```java
+class Solution {
+    public int minPathSum(int[][] grid) {
+        for(int i=1;i<grid.length;i++){
+            grid[i][0]+=grid[i-1][0];
+        }
+        for(int i=1;i<grid[0].length;i++){
+            grid[0][i]+=grid[0][i-1];
+        }
+        for(int i=1;i<grid.length;i++){
+            for(int j=1;j<grid[0].length;j++){
+                if(grid[i][j-1]<grid[i-1][j]){
+                    grid[i][j]+=grid[i][j-1];
+                }else{
+                    grid[i][j]+=grid[i-1][j];
+                }
+            }
+        }
+        return grid[grid.length-1][grid[0].length-1];
+    }
+}
+```
+
+## [343. 整数拆分](https://leetcode-cn.com/problems/integer-break/)
+
+方法一：数学法
+
+![image-20211011202503066](D:\blog\source\_drafts\leetcode刷题\13.png)
+
+```java
+class Solution {
+    public int integerBreak(int n) {
+        if(n<=3) return n-1;
+        int a=n/3;
+        int b=n%3;
+        if(b==0) return (int) Math.pow(3,a);
+        else if(b==1) return (int) Math.pow(3,a-1)*4;
+        else return (int) Math.pow(3,a)*2;
+    }
+}
+```
+
+方法二：动态规划
+
+![image-20211011204426312](D:\blog\source\_drafts\leetcode刷题\14.png)
+
+```java
+class Solution {
+    public int integerBreak(int n) {
+        int[] dp=new int[n+1];
+        for(int i=2;i<=n;i++){
+            int curMax=0;
+            for(int j=1;j<i;j++){
+                curMax=Math.max(curMax,Math.max(j*(i-j),j*dp[i-j]));
+            }
+            dp[i]=curMax;
+        }
+        return dp[n];
+    }
+}
+```
+
+## [120. 三角形最小路径和](https://leetcode-cn.com/problems/triangle/)
+
+```java
+class Solution {
+    public int minimumTotal(List<List<Integer>> triangle) {
+        int res=Integer.MAX_VALUE;
+        for(int i=1;i<triangle.size();i++){
+            for(int j=0;j<triangle.get(i).size();j++){
+                if(j-1>=0 && j<triangle.get(i-1).size()){
+                    int now=triangle.get(i).get(j);
+                    now+=Math.min(triangle.get(i-1).get(j-1),triangle.get(i-1).get(j));
+                    triangle.get(i).set(j, now);
+                }else if(j-1>=0){
+                    int now=triangle.get(i).get(j);
+                    now+=triangle.get(i-1).get(j-1);
+                    triangle.get(i).set(j,now);
+                }else{
+                    int now=triangle.get(i).get(j);
+                    now+=triangle.get(i-1).get(j);
+                    triangle.get(i).set(j,now);
+                }
+            }
+        }
+        for(int p:triangle.get(triangle.size()-1)){
+            if(p<res){
+                res=p;
+            }
+        }
+        return res;
+    }
+}
+```
+
+## [518. 零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/)
+
+方法：动态规划
+
+```java
+class Solution {
+    public int change(int amount, int[] coins) {
+        int[] dp=new int[amount+1];
+        dp[0]=1;
+        for(int coin : coins){
+            for(int i=coin;i<=amount;i++){
+                dp[i]+=dp[i-coin];
+            }
+        }
+        return dp[amount];
+    }
+}
+```
+
+## [125 · 背包问题（二）](https://www.lintcode.com/problem/125)
+
+0-1背包问题
+
+**思路：**
+
+1. 如果装不下当前物品，那么前n个物品的最佳组合和前n-1个物品的最佳组合是一样的
+
+2. 如果装得下当前物品
+
+   - 假设1：装当前物品，在给当前物品预留了相应空间的情况下，前n-1个物品的最佳组合加上当前物品的价值就是总价值。
+   - 假设2:不装当前物品，那么前n个物品的最佳组合和前n-1个物品的最佳组合是一样的
+
+   - 选取假设1和假设2中较大的价值，为当前最佳组合的价值。
+
+**例子：**
+
+![image-20211029194943474](D:\blog\source\_drafts\leetcode刷题\15.png)
+
+dp：
+
+![image-20211029202102035](D:\blog\source\_drafts\leetcode刷题\16.png)
+
+参考：[【动态规划】背包问题](https://www.bilibili.com/video/BV1K4411X766?from=search&seid=8411772669347516386&spm_id_from=333.337.0.0)
+
+```java
+public class Solution {
+    /**
+     * @param m: An integer m denotes the size of a backpack
+     * @param A: Given n items with size A[i]
+     * @param V: Given n items with value V[i]
+     * @return: The maximum value
+     */
+    public int backPackII(int m, int[] A, int[] V) {
+        // dp[i][j]: 表示背包大小为j,可放进前i个物品，背包可容纳的最大价值
+        int[][] dp=new int[A.length+1][m+1];
+        for(int i=1;i<dp.length;i++){    //遍历物品
+            for(int j=1;j<m+1;j++){      //在可放进前i个物品，背包大小为j的前提下，背包可容纳的最大价值
+                if(j<A[i-1]){    //当前的背包不能放入物品i
+                    dp[i][j]=dp[i-1][j];
+                }else{      //当前的背包能放入物品(i-1)
+                    // dp[i-1][j]: 大小为j的背包不放入物品(i-1)的价值
+                    // dp[i-1][j-A[i-1]]:  大小为j的背包，在腾空物品(i-1)所需的空间，和不放入物品(i-1)的价值
+                    // dp[i-1][j-A[i-1]]+V[i-1]:  腾空后的背包装入物品(i-1)的价值
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i-1][j-A[i-1]]+V[i-1]);
+                }
+            }
+        }
+        return dp[A.length][m];
+    }
+}
+```
+
+优化空间复杂度：
+
+为了防止计算结果被覆盖，得从后向前分别进行计算
+
+```java
+public class Solution {
+    /**
+     * @param m: An integer m denotes the size of a backpack
+     * @param A: Given n items with size A[i]
+     * @param V: Given n items with value V[i]
+     * @return: The maximum value
+     */
+    public int backPackII(int m, int[] A, int[] V) {
+        // dp[i]: 表示背包大小为i,背包可容纳的最大价值
+        int[] dp=new int[m+1];
+        for(int i=0;i<A.length;i++){
+            for(int j=m;j>=0;j--){
+                if(j>=A[i]){
+                    dp[j]=Math.max(dp[j],dp[j-A[i]]+V[i]);
+                }
+            }
+        }
+        return dp[m];
+    }
+}
+```
+
+优化时间：
+
+```java
+public class Solution {
+    /**
+     * @param m: An integer m denotes the size of a backpack
+     * @param A: Given n items with size A[i]
+     * @param V: Given n items with value V[i]
+     * @return: The maximum value
+     */
+    public int backPackII(int m, int[] A, int[] V) {
+        // dp[i]: 表示背包大小为i,背包可容纳的最大价值
+        int[] dp=new int[m+1];
+        for(int i=0;i<A.length;i++){
+            for(int j=m;j>=A[i];j--){
+                dp[j]=Math.max(dp[j],dp[j-A[i]]+V[i]);
+            }
+        }
+        return dp[m];
+    }
+}
+```
+
+
+
+**进阶：** 列出背包最后装入哪些物品
+
+思路：从表的右下角开始回溯，如果发现前n个物品最佳组合的价值和前n-1个物品最佳组合的价值一样，说明第n个物品没有被装入。否则，第n个物品被装入。
+
+```java
+public List<Integer> backPackII2(int m, int[] A, int[] V) {
+    int[][] dp=new int[A.length+1][m+1];
+    for(int i=1;i<dp.length;i++){    
+        for(int j=1;j<m+1;j++){      
+            if(j<A[i-1]){    
+                dp[i][j]=dp[i-1][j];
+            }else{    
+                dp[i][j]=Math.max(dp[i-1][j],dp[i-1][j-A[i-1]]+V[i-1]);
+            }
+        }
+    }
+
+    List<Integer> res=new ArrayList<>();
+    int i=dp.length-1;
+    int j=m;
+    while(i>0 && j>0){
+        if(dp[i][j]==dp[i-1][j]){
+            i--;
+        }
+        else{
+            res.add(i-1);
+            j-=A[i-1];
+            i--;
+        }
+    }
+    return res;
+}
+```
+
+## [92 · 背包问题](https://www.lintcode.com/problem/92)
+
+125 · 背包问题（二）的特例，价值=体积。
+
+总的来说，思路是一样的：
+
+1. 如果装不下当前物品，那么前n个物品的最佳组合和前n-1个物品的最佳组合是一样的
+
+2. 如果装得下当前物品
+
+   - 假设1：装当前物品，在给当前物品预留了相应空间的情况下，前n-1个物品的最佳组合加上当前物品的价值就是总价值。
+   - 假设2:不装当前物品，那么前n个物品的最佳组合和前n-1个物品的最佳组合是一样的
+
+   - 选取假设1和假设2中较大的价值，为当前最佳组合的价值。
+
+```java
+public class Solution {
+    /**
+     * @param m: An integer m denotes the size of a backpack
+     * @param A: Given n items with size A[i]
+     * @return: The maximum size
+     */
+    public int backPack(int m, int[] A) {
+        // dp[i][j]: 背包大小为j,可放进前i个物品,背包可容纳的最大重量
+        int dp[][] = new int[A.length + 1][m + 1];
+        for(int i=1;i<dp.length;i++){
+            for(int j=1;j<m+1;j++){
+                if(j<A[i-1]){    // 装不进
+                    dp[i][j]=dp[i-1][j];
+                }else{     //装得进
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i-1][j-A[i-1]]+A[i-1]);
+                }
+            }
+        }
+        return dp[A.length][m];
+    }
+}
+```
+
+优化空间和时间版：
+
+同样，为了防止计算结果被覆盖，得从后向前分别进行计算
+
+```java
+public class Solution {
+    /**
+     * @param m: An integer m denotes the size of a backpack
+     * @param A: Given n items with size A[i]
+     * @return: The maximum size
+     */
+    public int backPack(int m, int[] A) {
+        // dp[j]: 大小为j的背包可容纳的最大重量
+        int dp[] = new int[m + 1];
+        for(int i=0;i<A.length;i++){
+            for(int j=m;j>=A[i];j--){
+                dp[j]=Math.max(dp[j],dp[j-A[i]]+A[i]);
+            }
+        }
+        return dp[m];
+    }
+}
+```
+
+
+
+## [440 · 背包问题 III](https://www.lintcode.com/problem/440)
+
+125 · 背包问题（二）的进化版，物品数量不限。
+
+之前是与没放进物品i的dp比较，现在要与放进物品i的dp比较
+
+**思路：**
+
+1. 如果装不下当前物品，那么前n个物品的最佳组合和前n-1个物品的最佳组合是一样的
+
+2. 如果装得下当前物品
+
+   - 假设1：装当前物品，在给当前物品预留了相应空间的情况下，==当前背包重量-物品n重量==的最佳组合加上当前物品的价值就是总价值。**（different）**
+   - 假设2:不装当前物品，那么前n个物品的最佳组合和前n-1个物品的最佳组合是一样的
+
+   - 选取假设1和假设2中较大的价值，为当前最佳组合的价值。
+
+```java
+public class Solution {
+    /**
+     * @param A: an integer array
+     * @param V: an integer array
+     * @param m: An integer
+     * @return: an array
+     */
+    public int backPackIII(int[] A, int[] V, int m) {
+        int[][] dp=new int[A.length+1][m+1];
+        for(int i=1;i<dp.length;i++){
+            for(int j=1;j<m+1;j++){
+                if(j<A[i-1]){   //装不进
+                    dp[i][j]=dp[i-1][j];
+                }else{    //装得进
+                    dp[i][j]=Math.max(dp[i-1][j],dp[i][j-A[i-1]]+V[i-1]);
+                }
+            }
+        }
+        return dp[A.length][m];
+    }
+}
+```
+
+优化空间复杂度：
+
+这里需要从前向后分别进行计算
+
+```java
+public class Solution {
+    /**
+     * @param A: an integer array
+     * @param V: an integer array
+     * @param m: An integer
+     * @return: an array
+     */
+    public int backPackIII(int[] A, int[] V, int m) {
+        int[] dp=new int[m+1];
+        for(int i=0;i<A.length;i++){
+            for(int j=A[i];j<m+1;j++){
+                dp[j]=Math.max(dp[j],dp[j-A[i]]+V[i]);
+            }
+        }
+        return dp[m];
+    }
+}
+```
+
+
+
+## [562 · 背包问题 IV](https://www.lintcode.com/problem/562)
+
+该问题与 [518. 零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/) 是一样的
+
+思路：
+
+1. 如果装不下当前物品，那么前n个物品能填满当前背包的方案数与前n-1个物品能填满当前背包的方案数相同
+2. 如果能装下当前物品
+   - 假设1：当前物品的重量等于当前背包的大小，那么当前背包方案数为前n-1个物品能填满当前背包的方案数+1
+   - 假设2：当前物品的重量大于当前背包的大小，那么当前背包方案数为前n-1个物品能填满当前背包的方案数+减去当前物品重量的背包的方案数
+
+```java
+public class Solution {
+    /**
+     * @param nums: an integer array and all positive numbers, no duplicates
+     * @param target: An integer
+     * @return: An integer
+     */
+    public int backPackIV(int[] nums, int target) {
+        int[][] dp=new int[nums.length+1][target+1];
+        for(int i=1;i<nums.length+1;i++){
+            for(int j=1;j<target+1;j++){
+                if(j<nums[i-1]){
+                    dp[i][j]=dp[i-1][j];
+                }else if(j==nums[i-1]){
+                    dp[i][j]=dp[i-1][j]+1;
+                }else {
+                    dp[i][j]=dp[i-1][j]+dp[i][j-nums[i-1]];
+                }
+            }
+        }
+        return dp[nums.length][target];
+    }
+}
+```
+
+优化空间和时间：
+
+```java
+public class Solution {
+    /**
+     * @param nums: an integer array and all positive numbers, no duplicates
+     * @param target: An integer
+     * @return: An integer
+     */
+    public int backPackIV(int[] nums, int target) {
+        int[] dp=new int[target+1];
+        for(int i=0;i<nums.length;i++){
+            for(int j=nums[i];j<=target;j++){
+                if(j==nums[i]){
+                    ++dp[j];
+                }else{
+                    dp[j]+=dp[j-nums[i]];
+                }
+            }
+        }
+        return dp[target];
+    }
+}
+```
+
+
+
+## [563 · 背包问题 V](https://www.lintcode.com/problem/563)
+
+562 · 背包问题 IV的变化版
+
+```java
+public class Solution {
+    /**
+     * @param nums: an integer array and all positive numbers
+     * @param target: An integer
+     * @return: An integer
+     */
+    public int backPackV(int[] nums, int target) {
+        int[][] dp=new int[nums.length+1][target+1];
+        for(int i=1;i<=nums.length;i++){
+            for(int j=1;j<=target;j++){
+                if(j<nums[i-1]){
+                    dp[i][j]=dp[i-1][j];
+                }else if(j==nums[i-1]){
+                    dp[i][j]=dp[i-1][j]+1;
+                }else{
+                    dp[i][j]=dp[i-1][j-nums[i-1]]+dp[i-1][j];
+                }
+            }
+        }
+        return dp[nums.length][target];
+    }
+}
+```
+
+优化空间和时间：
+
+值得注意的是：
+
+- 当每一个物品只能使用一次时，得从后往前遍历，防止计算结果被覆盖
+- 当每一个物品可使用无限次时，就要从前往后遍历
+
+```java
+public class Solution {
+    /**
+     * @param nums: an integer array and all positive numbers
+     * @param target: An integer
+     * @return: An integer
+     */
+    public int backPackV(int[] nums, int target) {
+        int[] dp=new int[target+1];
+        for(int i=0;i<nums.length;i++){
+            for(int j=target;j>=nums[i];j--){
+                if(j==nums[i]){
+                    ++dp[j];
+                }else{
+                    dp[j]+=dp[j-nums[i]];
+                }
+            }
+        }
+        return dp[target];
+    }
+}
+```
+
+
+
+
 
 
 
 
 # 二分查找
-
-
 
 ## [1351. 统计有序矩阵中的负数](https://leetcode-cn.com/problems/count-negative-numbers-in-a-sorted-matrix/)
 
@@ -7666,6 +8373,32 @@ class Solution {
 }
 ```
 
+## [738. 单调递增的数字](https://leetcode-cn.com/problems/monotone-increasing-digits/)
+
+方法：从右往左遍历，当当前的数字比前一个数字大时，将前一个数字减一，当前的数字变为9
+
+```java
+class Solution {
+    public int monotoneIncreasingDigits(int n) {
+        char[] chars = Integer.toString(n).toCharArray();
+        int i=chars.length-1;
+        while(i>0){
+            if(chars[i]<chars[i-1]){
+                --chars[i-1];
+                int j=i;
+                while(j< chars.length){
+                    chars[j++]='9';
+                }
+            }
+            --i;
+        }
+        return Integer.parseInt(new String(chars));
+    }
+}
+```
+
+
+
 
 
 
@@ -11020,7 +11753,227 @@ class Solution {
 
 
 
+# 分治法
+
+## [105. 从前序与中序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-inorder-traversal/)
+
+方法：
+
+![image-20211105205912202](D:\blog\source\_drafts\leetcode刷题\17.png)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] preorder, int[] inorder) {
+        Map<Integer,Integer> inorderMap=new HashMap<>();
+        for(int i=0;i<inorder.length;i++){
+            inorderMap.put(inorder[i],i);
+        }
+        return buildTreeHelper(preorder,0,preorder.length-1,inorder,0,inorder.length-1, inorderMap);
+    }
+
+    
+    public TreeNode buildTreeHelper(int[] preorder,int preLeft,int preRight,
+                                    int[] inorder,int inLeft,int inRight,
+                                    Map<Integer,Integer> inorderMap){
+        if(preLeft>preRight || inLeft>inRight){
+            return null;
+        }
+        TreeNode node=new TreeNode(preorder[preLeft]);
+        int pIndex=inorderMap.get(preorder[preLeft]);
+        node.left=buildTreeHelper(preorder,preLeft+1,preLeft+pIndex-inLeft,
+                                  inorder,inLeft,pIndex-1,inorderMap);
+        node.right=buildTreeHelper(preorder,preLeft+pIndex-inLeft+1, preRight,
+                                   inorder,pIndex+1, inRight,inorderMap);
+        return node;
+    }   
+}
+```
+
+## [106. 从中序与后序遍历序列构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-inorder-and-postorder-traversal/)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode buildTree(int[] inorder, int[] postorder) {
+        Map<Integer,Integer> map=new HashMap<>();
+        for(int i=0;i<inorder.length;i++){
+            map.put(inorder[i],i);
+        }
+        return buildTreeHelper(inorder,0,inorder.length-1,
+                               postorder,0,postorder.length-1,map);
+    }
+
+    public TreeNode buildTreeHelper(int[] inorder,int inLeft,int inRight,
+                                    int[] postOrder,int postLeft,int postRight,
+                                    Map<Integer,Integer> map){
+        if(inLeft>inRight || postLeft>postRight){
+            return null;
+        }
+        TreeNode node=new TreeNode(postOrder[postRight]);
+        int pIndex=map.get(postOrder[postRight]);
+        node.left=buildTreeHelper(inorder,inLeft,pIndex-1,postOrder,
+                                  postLeft,postRight-inRight+pIndex-1,map);
+        node.right=buildTreeHelper(inorder,pIndex+1,inRight,postOrder,
+                                   postRight-inRight+pIndex,postRight-1,map);
+        return node;
+    }
+}
+```
+
+## [889. 根据前序和后序遍历构造二叉树](https://leetcode-cn.com/problems/construct-binary-tree-from-preorder-and-postorder-traversal/)
+
+思路：每遍历一个点都要确定左子树边界和右子树边界
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    public TreeNode constructFromPrePost(int[] preorder, int[] postorder) {
+        Map<Integer,Integer> map=new HashMap<>();
+        for(int i=0;i<postorder.length;i++){
+            map.put(postorder[i],i);
+        }
+        return constructFromPrePost(preorder,0,preorder.length-1,
+                postorder,0, postorder.length-1,map);
+    }
+
+
+    public TreeNode constructFromPrePost(int[] preorder,int preLeft,int preRight,
+                                         int[] postorder,int postLeft,int postRight,
+                                         Map<Integer,Integer> map) {
+        if(preLeft>preRight || postLeft>postRight){
+            return null;
+        }
+
+        TreeNode node=new TreeNode(preorder[preLeft]);
+        
+        if(preLeft+1<=preRight){
+            int pIndex=map.get(preorder[preLeft+1]);
+            node.left=constructFromPrePost(preorder,preLeft+1,preLeft+1+pIndex-postLeft,
+                    postorder,postLeft,pIndex,map);
+            node.right=constructFromPrePost(preorder,preLeft+pIndex-postLeft+2,preRight,
+                    postorder,pIndex+1,postRight-1,map);
+        }
+        
+        return node;
+    }
+}
+```
+
+## [215. 数组中的第K个最大元素](https://leetcode-cn.com/problems/kth-largest-element-in-an-array/)
+
+方法一：暴力
+
+```java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        Arrays.sort(nums);
+        return nums[nums.length-k];
+    }
+}
+```
+
+方法二：基于快排的选择方法
+
+```java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        int left=0,right=nums.length-1;
+        int target=nums.length-k;
+        while(left<=right){
+            int index=particular(nums,left,right);
+            if(index==target) return nums[target];
+            else if(index<target){
+                left=index+1;
+            }else{
+                right=index-1;
+            }
+        }
+        return -1;
+    }
+
+    public int particular(int[] nums,int left,int right){
+        int p=nums[left];
+        while(left<right){
+            while(left<right && nums[right]>p) --right;
+            if(left<right) nums[left++]=nums[right];
+            while(left<right && nums[left]<p) ++left;
+            if(left<right) nums[right--]=nums[left];
+        }
+        nums[left]=p;
+        return left;
+    }
+}
+```
+
+方法三：最大堆排序
+
+```java
+class Solution {
+    public int findKthLargest(int[] nums, int k) {
+        PriorityQueue<Integer> heap=new PriorityQueue<>();
+        for(int num:nums){
+            heap.add(num);
+            if(heap.size()>k){
+                heap.poll();
+            }
+        }
+        return heap.peek();
+    }
+}
+```
 
 
 
+
+
+
+
+
+
+
+
+# 堆
 
