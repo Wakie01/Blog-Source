@@ -254,6 +254,12 @@ list元素也可以是另一个list：
 
 
 
+特殊用法：
+
+列表前带`*`号，表示将列表中的n个元素划分为n个单独的元素，常用于函数传参。
+
+
+
 常用函数：
 
 | 函数        | 作用                     | 用法                         |
@@ -264,6 +270,12 @@ list元素也可以是另一个list：
 | pop()       | 弹出并删除list末尾的元素 | classmates.pop()             |
 | pop(i)      | 弹出并删除指定位置的元素 | classmates.pop(1)            |
 | A.extend(B) | 将B的全部元素append到A   | A.extend(B)                  |
+
+
+
+
+
+
 
 
 

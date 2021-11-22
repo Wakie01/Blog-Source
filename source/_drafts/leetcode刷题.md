@@ -5312,7 +5312,39 @@ class Solution {
 }
 ```
 
+## [658. 找到 K 个最接近的元素](https://leetcode-cn.com/problems/find-k-closest-elements/)
 
+```java
+class Solution {
+    public List<Integer> findClosestElements(int[] arr, int k, int x) {
+        int distance=Integer.MAX_VALUE;
+        int ind=0;
+        for(int i=0;i<arr.length;i++){
+            if(Math.abs(arr[i]-x)<distance){
+                distance=Math.abs(arr[i]-x);
+                ind=i;
+            }
+        }
+        List<Integer> res=new ArrayList<>();
+        res.add(arr[ind]);
+        int left=ind-1,right=ind+1;
+        while(res.size()<k){
+            if(left>=0 && right<arr.length){
+                if(Math.abs(arr[left]-x)<=Math.abs(arr[right]-x)){
+                    res.add(0,arr[left--]);
+                }else{
+                    res.add(res.size(),arr[right++]);
+                }
+            }else if(left>=0){
+                res.add(0,arr[left--]);
+            }else{
+                res.add(res.size(),arr[right++]);
+            }
+        }
+        return res;
+    }
+}
+```
 
 
 
@@ -5838,9 +5870,127 @@ class Solution {
 }
 ```
 
+## [50. Pow(x, n)](https://leetcode-cn.com/problems/powx-n/)
 
+方法：
+$$
+a^n=
+		\begin{cases}
+			(a^{n/2})^2,   & n为偶数  \\
+			a*a^{n-1},     & n为奇数
+		\end{cases}
+$$
 
+```java
+class Solution {
+    public double myPow(double x, int n) {
+        long p=(long) n;
+        return n>0? myPowHelper(x,p):1/myPowHelper(x,-p);
+    }
 
+    public double myPowHelper(double x, long n) {
+        if(n==0) return 1.0;
+        if(n%2==0){
+            double num=myPowHelper(x,n/2);
+            return num*num;
+        }else{
+            return x*myPowHelper(x,n-1);
+        }
+    }
+}
+```
+
+## [372. 超级次方](https://leetcode-cn.com/problems/super-pow/)
+
+这道题，主要注意三点：
+
+1. 公式一： 
+   $$
+   (a*b) \% c =(a \% c) * (b \% c) \%c
+   $$
+
+2. 公式二：
+   $$
+   a^{1234}=a^4*(a^{123})^{10}
+   $$
+
+3. 防溢出，从小就得开始求模
+
+```java
+class Solution {
+    public int superPow(int a, int[] b) {
+        return superPowerHelper(a,b,b.length-1);
+    }
+
+    public int superPowerHelper(int a, int[] b,int index){
+        if(index<0) return 1;
+        int k=1337;
+        int base1=myPower(a,b[index]);
+        int base2=myPower(superPowerHelper(a,b,index-1),10);
+        return (base1 * base2) % k;
+    }
+
+    public int myPower(int a,int b){
+        if(b==0) return 1;
+        int k=1337;
+        if(b%2==0){
+            int num=myPower(a,b/2);
+            return (num%k)*(num%k)%k;   //从小就开始求模
+        }else{
+            return (a%k)*(myPower(a,b-1)%k)%k;   //从小就开始求模
+        }
+    }
+}
+```
+
+## [263. 丑数](https://leetcode-cn.com/problems/ugly-number/)
+
+方法：
+
+![image-20211119100833408](D:\blog\source\_drafts\leetcode刷题\18.png)
+
+```java
+class Solution {
+    public boolean isUgly(int n) {
+        if(n<=0) return false;
+        while(n%2==0) n/=2;
+        while(n%3==0) n/=3;
+        while(n%5==0) n/=5;
+        return n==1;
+    }
+}
+```
+
+## [384. 打乱数组](https://leetcode-cn.com/problems/shuffle-an-array/)
+
+```java
+class Solution {
+    int[] nums;
+    int[] original;
+
+    public Solution(int[] nums) {
+        this.nums = nums;
+        this.original = new int[nums.length];
+        System.arraycopy(nums, 0, original, 0, nums.length);
+    }
+    
+    public int[] reset() {
+        System.arraycopy(original, 0, nums, 0, nums.length);
+        return nums;
+    }
+    
+    public int[] shuffle() {
+        Random random = new Random();
+        for (int i = 0; i < nums.length; ++i) {
+            int j = i + random.nextInt(nums.length - i);
+            int temp = nums[i];
+            nums[i] = nums[j];
+            nums[j] = temp;
+        }
+        return nums;
+    }
+}
+```
 
 
 
@@ -11965,15 +12115,665 @@ class Solution {
 }
 ```
 
+## [347. 前 K 个高频元素](https://leetcode-cn.com/problems/top-k-frequent-elements/)
 
+方法一：基于快速排序的定位，执行用时107ms
 
+```java
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> countMap = new HashMap<Integer, Integer>();
+        for (int num : nums) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        // countArray[][0]: 频次     countArray[][1]: 数字
+        int[][] countArray=new int[countMap.size()][2];
+        int p=0;
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            countArray[p++]=new int[]{entry.getValue(),entry.getKey()};
+        }
+        p=qsort(countArray,0,countArray.length-1);
+        while(p!= countArray.length-k){
+            if(p<countArray.length-k){
+                p=qsort(countArray,p+1,countArray.length-1);
+            }else{
+                p=qsort(countArray,0,p-1);
+            }
+        }
 
+        int[] res=new int[k];
+        for(int i=0;p<countArray.length;p++,i++){
+            res[i]=countArray[p][1];
+        }
+        return res;
+    }
 
+    public int qsort(int[][] countArray, int start, int end) {
+        int[] temp=countArray[start];
+        while(start<end){
+            while(start<end && countArray[end][0]>=temp[0]){
+                --end;
+            }
+            if(start<end){
+                countArray[start++]=countArray[end];
+            }
+            while(start<end && countArray[start][0]<=temp[0]){
+                ++start;
+            }
+            if(start<end){
+                countArray[end--]=countArray[start];
+            }
+        }
+        countArray[start]=temp;
+        return start;
+    }
 
+}
+```
 
+优化版，执行用时12ms
 
+```java
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer, Integer> countMap = new HashMap<Integer, Integer>();
+        for (int num : nums) {
+            countMap.put(num, countMap.getOrDefault(num, 0) + 1);
+        }
+        // countArray[][0]: 频次     countArray[][1]: 数字
+        int[][] countArray=new int[countMap.size()][2];
+        int p=0;
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            countArray[p++]=new int[]{entry.getValue(),entry.getKey()};
+        }
+        qsort(countArray,0,countArray.length-1,k);
+        
+        int[] res=new int[k];
+        for(int i=0;i<k;i++){
+            res[i]=countArray[i+countArray.length-k][1];
+        }
+        return res;
+    }
+
+    public void qsort(int[][] countArray, int start, int end,int k){
+        int[] temp=countArray[start];
+        int l=start,r=end;
+        while(l<r){
+            while(l<r && countArray[r][0]>=temp[0]){
+                --r;
+            }
+            if(l<r){
+                countArray[l++]=countArray[r];
+            }
+            while(l<r && countArray[l][0]<=temp[0]){
+                ++l;
+            }
+            if(l<r){
+                countArray[r--]=countArray[l];
+            }
+        }
+        countArray[l]=temp;
+        if(l<countArray.length-k){
+            qsort(countArray,l+1,end,k);
+        }else if(l>countArray.length-k){
+            qsort(countArray,start,l-1,k);
+        }
+    }
+}
+```
+
+方法二：基于大根堆
+
+```java
+class Solution {
+    public int[] topKFrequent(int[] nums, int k) {
+        Map<Integer,Integer> countMap=new HashMap<>();
+        for(int num:nums){
+            countMap.put(num,countMap.getOrDefault(num,0)+1);
+        }
+
+        int[] res=new int[k];
+        PriorityQueue<int[]> queue=new PriorityQueue<>(new Comparator<int[]>() {
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o2[0]-o1[0];
+            }
+        });
+        for (Map.Entry<Integer, Integer> entry : countMap.entrySet()) {
+            queue.add(new int[]{entry.getValue(), entry.getKey()});
+        }
+        for(int i=0;i<k;i++){
+            res[i]=queue.poll()[1];
+        }
+        return res;
+    }
+
+}
+```
+
+## [973. 最接近原点的 K 个点](https://leetcode-cn.com/problems/k-closest-points-to-origin/)
+
+方法一：基于快排，执行用时1167ms
+
+```java
+class Solution {
+    public int[][] kClosest(int[][] points, int k) {
+        // distanceArray[][0]: points位置    distanceArray[][1]: 距离
+        int[][] distanceArray=new int[points.length][2];
+        for(int i=0;i<points.length;i++){
+            distanceArray[i]=new int[]{i,points[i][0]*points[i][0]+points[i][1]*points[i][1]};
+        }
+        int p=kClosest(distanceArray,0, distanceArray.length-1);
+        while(p!= k-1){
+            if(p > k-1){
+                p=kClosest(distanceArray,0, p-1);
+            }else{
+                p=kClosest(distanceArray,p+1, distanceArray.length-1);
+            }
+        }
+        int[][] res=new int[k][2];
+        for(int i=0;i<k;i++){
+            res[i]=points[distanceArray[i][0]];
+        }
+        return res;
+    }
+
+    public int kClosest(int[][] distanceArray,int left,int right){
+        int[] temp=distanceArray[left];
+        while(left<right){
+            while(left<right && temp[1]<distanceArray[right][1]){
+                --right;
+            }
+            if(left<right){
+                distanceArray[left++]=distanceArray[right];
+            }
+            while(left<right && temp[1]>distanceArray[left][1]){
+                ++left;
+            }
+            if(left<right){
+                distanceArray[right--]=distanceArray[left];
+            }
+        }
+        distanceArray[left]=temp;
+        return left;
+    }
+}
+```
+
+优化版，执行用时10ms
+
+```java
+class Solution {
+    public int[][] kClosest(int[][] points, int k) {
+        // distanceArray[][0]: points位置    distanceArray[][1]: 距离
+        int[][] distanceArray=new int[points.length][2];
+        for(int i=0;i<points.length;i++){
+            distanceArray[i]=new int[]{i,points[i][0]*points[i][0]+points[i][1]*points[i][1]};
+        }
+        kClosest(distanceArray,0, distanceArray.length-1, k);
+        int[][] res=new int[k][2];
+        for(int i=0;i<k;i++){
+            res[i]=points[distanceArray[i][0]];
+        }
+        return res;
+    }
+
+    public void kClosest(int[][] distanceArray,int left,int right,int k){
+        int[] temp=distanceArray[left];
+        int l=left,r=right;
+        while(l<r){
+            while(l<r && temp[1]<distanceArray[r][1]){
+                --r;
+            }
+            if(l<r){
+                distanceArray[l++]=distanceArray[r];
+            }
+            while(l<r && temp[1]>distanceArray[l][1]){
+                ++l;
+            }
+            if(l<r){
+                distanceArray[r--]=distanceArray[l];
+            }
+        }
+        distanceArray[l]=temp;
+        if(l>k && left<l-1){
+            kClosest(distanceArray,left,l-1,k);
+        }else if(l<k && l+1<right){
+            kClosest(distanceArray,l+1,right,k);
+        }
+    }
+}
+```
+
+## [1985. 找出数组中的第 K 大整数](https://leetcode-cn.com/problems/find-the-kth-largest-integer-in-the-array/)
+
+```java
+class Solution {
+    public String kthLargestNumber(String[] nums, int k) {
+        Arrays.sort(nums, new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                if(o1.length()!=o2.length()){
+                    return o2.length()-o1.length();
+                }else{
+                    return o2.compareTo(o1);
+                }
+            }
+        });
+        
+        return nums[k-1];
+    }
+}
+```
 
 
 
 # 堆
+
+## 利用大根堆排序
+
+```java
+/**
+* 构建大顶堆
+* @param from 从哪个节点开始
+* @param to 到哪个节点结束
+*/
+public void buildMaxHeap(int[] nums,int from,int to){
+    for(int i=(to-1)/2; i>=from; i--){
+        //交换左子树结点
+        if(2*i+1<=to && nums[i]<nums[2*i+1]){
+            swap(nums,i,2*i+1);
+            // 判断是否需要调整子树
+            int j=2*i+1;
+            if(2*j+1<=to && nums[j]<nums[2*j+1] || 2*j+2<=to && nums[j]<nums[2*j+2]){
+                buildMaxHeap(nums,j,to);    //调整子树
+            }
+        }
+        //交换右子树结点
+        if(2*i+2<=to && nums[i]<nums[2*i+2]){
+            swap(nums,i,2*i+2);
+            int j=2*i+2;
+            if(2*j+1<=to && nums[j]<nums[2*j+1] || 2*j+2<=to && nums[j]<nums[2*j+2]){
+                buildMaxHeap(nums,j,to);    //调整子树
+            }
+        }
+    }
+}
+
+public void swap(int[] nums,int i,int j){
+    int n=nums[i];
+    nums[i]=nums[j];
+    nums[j]=n;
+}
+
+/**
+* 通过大顶堆进行排序
+* @param nums
+*/
+public void sortWithMaxHeap(int[] nums){
+    for(int i=nums.length-1;i>0;i--){
+        buildMaxHeap(nums,0,i);
+        swap(nums,0,i);
+    }
+}
+```
+
+## [692. 前K个高频单词](https://leetcode-cn.com/problems/top-k-frequent-words/)
+
+方法一：大根堆
+
+```java
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        //统计单词次数
+        Map<String,Integer> frequentMap=new HashMap<>();
+        for (String word : words) {
+            frequentMap.put(word,frequentMap.getOrDefault(word,0)+1);
+        }
+        //转为数组  frequentArr[i][0]:word     frequentArr[i][1]:次数
+        Object[][] frequentArr=new Object[frequentMap.size()][2];
+        int i=0;
+        for (Map.Entry<String, Integer> entry : frequentMap.entrySet()) {
+            frequentArr[i++]=new Object[]{entry.getKey(),entry.getValue()};
+        }
+        //通过大顶堆获取前k个次数最多的单词
+        List<String> res=new ArrayList<>();
+        i=0;
+        while(i<k){
+            buildtopKFrequentHeap(frequentArr,0,frequentArr.length-1-i);
+            res.add((String)frequentArr[0][0]);
+            swapFrequentArr(frequentArr,0,frequentArr.length-1-i);
+            i++;
+        }
+        return res;
+    }
+
+    public void buildtopKFrequentHeap(Object[][] frequentArr, int from, int to){
+        //构建大顶堆
+        for(int i=(to-1)/2;i>=from;i--){
+            //左孩子
+            if(2*i+1<=to && (int)frequentArr[i][1]<(int)frequentArr[2*i+1][1]){
+                swapFrequentArr(frequentArr,i,2*i+1);
+                int j=2*i+1;
+                if(2*j+1<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+1][1] ||
+                        2*j+2<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+2][1]){
+                    buildtopKFrequentHeap(frequentArr,j,to);
+                }
+            }else if(2*i+1<=to && (int)frequentArr[i][1]==(int)frequentArr[2*i+1][1]){
+                //次数相等时，按字母顺序排序
+                if(((String)frequentArr[i][0]).compareTo((String) frequentArr[2*i+1][0])>0){
+                    swapFrequentArr(frequentArr,i,2*i+1);
+                }
+            }
+
+            //右子树
+            if(2*i+2<=to && (int)frequentArr[i][1]<(int)frequentArr[2*i+2][1]){
+                swapFrequentArr(frequentArr,i,2*i+2);
+                int j=2*i+2;
+                if(2*j+1<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+1][1] ||
+                        2*j+2<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+2][1]){
+                    buildtopKFrequentHeap(frequentArr,j,to);
+                }
+            }else if(2*i+2<=to && (int)frequentArr[i][1]==(int)frequentArr[2*i+2][1]){
+                //次数相等时，按字母顺序排序
+                if(((String)frequentArr[i][0]).compareTo((String) frequentArr[2*i+2][0])>0){
+                    swapFrequentArr(frequentArr,i,2*i+2);
+                }
+            }
+        }
+    }
+
+    public void swapFrequentArr(Object[][] frequentArr, int i, int j){
+        Object[] o=frequentArr[i];
+        frequentArr[i]=frequentArr[j];
+        frequentArr[j]=o;
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public List<String> topKFrequent(String[] words, int k) {
+        //统计单词次数
+        Map<String,Integer> frequentMap=new HashMap<>();
+        for (String word : words) {
+            frequentMap.put(word,frequentMap.getOrDefault(word,0)+1);
+        }
+        //转为数组  frequentArr[i][0]:word     frequentArr[i][1]:次数
+        Object[][] frequentArr=new Object[frequentMap.size()][2];
+        int i=0;
+        for (Map.Entry<String, Integer> entry : frequentMap.entrySet()) {
+            frequentArr[i++]=new Object[]{entry.getKey(),entry.getValue()};
+        }
+        //通过大顶堆获取前k个次数最多的单词
+        List<String> res=new ArrayList<>();
+        i=0;
+        while(i<k){
+            buildtopKFrequentHeap(frequentArr,0,frequentArr.length-1-i);
+            res.add((String)frequentArr[0][0]);
+            swapFrequentArr(frequentArr,0,frequentArr.length-1-i,false);
+            i++;
+        }
+        return res;
+    }
+
+    public void buildtopKFrequentHeap(Object[][] frequentArr, int from, int to){
+        //构建大顶堆
+        for(int i=(to-1)/2;i>=from;i--){
+            //左孩子
+            if(2*i+1<=to && (int)frequentArr[i][1]<=(int)frequentArr[2*i+1][1]){
+                swapFrequentArr(frequentArr,i,2*i+1,true);
+                int j=2*i+1;
+                if(2*j+1<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+1][1] ||
+                        2*j+2<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+2][1]){
+                    buildtopKFrequentHeap(frequentArr,j,to);
+                }
+            }
+
+            //右子树
+            if(2*i+2<=to && (int)frequentArr[i][1]<=(int)frequentArr[2*i+2][1]){
+                swapFrequentArr(frequentArr,i,2*i+2,true);
+                int j=2*i+2;
+                if(2*j+1<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+1][1] ||
+                        2*j+2<=to && (int)frequentArr[j][1]<=(int)frequentArr[2*j+2][1]){
+                    buildtopKFrequentHeap(frequentArr,j,to);
+                }
+            }
+        }
+    }
+
+    /**
+     * @param check 判断是否需要按字母顺序排序
+     */
+    public void swapFrequentArr(Object[][] frequentArr, int i, int j,boolean check){
+        if(check && (int)frequentArr[i][1]==(int)frequentArr[j][1]){
+            //次数相等时，按字母顺序排序
+            if(((String)frequentArr[i][0]).compareTo((String)frequentArr[j][0])>0){
+                Object[] o=frequentArr[i];
+                frequentArr[i]=frequentArr[j];
+                frequentArr[j]=o;
+            }
+        }else{
+            Object[] o=frequentArr[i];
+            frequentArr[i]=frequentArr[j];
+            frequentArr[j]=o;
+        }
+    }
+}
+```
+
+## [451. 根据字符出现频率排序](https://leetcode-cn.com/problems/sort-characters-by-frequency/)
+
+方法一：利用小根堆排序
+
+```java
+class Solution {
+    public String frequencySort(String s) {
+        Map<Character,Integer> map=new HashMap<>();
+        for(int i=0;i<s.length();i++){
+            map.put(s.charAt(i),map.getOrDefault(s.charAt(i),0)+1);
+        }
+        String[][] frequentArr=new String[map.size()][2];
+        int i=0;
+        for (Map.Entry<Character, Integer> entry : map.entrySet()) {
+            frequentArr[i++]=new String[]{entry.getKey().toString(),entry.getValue().toString()};
+        }
+        
+        StringBuilder sb=new StringBuilder();
+        for(i=0;i<frequentArr.length;i++){
+            buildFrequentMinHeap(frequentArr,0,frequentArr.length-1-i);
+            for(int j=0;j<Integer.parseInt(frequentArr[0][1]);j++){
+                sb.append(frequentArr[0][0]);
+            }
+            swap(frequentArr,0, frequentArr.length-1-i);
+        }
+        return sb.reverse().toString();
+    }
+
+    public void buildFrequentMinHeap(String[][] frequentArr,int from,int to){
+        for(int i=(to-1)/2;i>=from;i--){
+            if(2*i+1<=to && Integer.parseInt(frequentArr[i][1])>Integer.parseInt(frequentArr[2*i+1][1])){
+                swap(frequentArr,i,2*i+1);
+                int j=2*i+1;
+                if(2*j+1<=to && Integer.parseInt(frequentArr[j][1])>Integer.parseInt(frequentArr[2*j+1][1]) ||
+                        2*j+2<=to && Integer.parseInt(frequentArr[j][1])>Integer.parseInt(frequentArr[2*j+2][1])){
+                    buildFrequentMinHeap(frequentArr,j,to);
+                }
+            }
+
+            if(2*i+2<=to && Integer.parseInt(frequentArr[i][1])>Integer.parseInt(frequentArr[2*i+2][1])){
+                swap(frequentArr,i,2*i+2);
+                int j=2*i+2;
+                if(2*j+1<=to && Integer.parseInt(frequentArr[j][1])>Integer.parseInt(frequentArr[2*j+1][1]) ||
+                        2*j+2<=to && Integer.parseInt(frequentArr[j][1])>Integer.parseInt(frequentArr[2*j+2][1])){
+                    buildFrequentMinHeap(frequentArr,j,to);
+                }
+            }
+        }
+    }
+
+    public void swap(String[][] frequentArr,int i,int j){
+        String[] temp=frequentArr[i];
+        frequentArr[i]=frequentArr[j];
+        frequentArr[j]=temp;
+    }
+}
+```
+
+优化：将数组替代Map
+
+```java
+class Solution {
+    public String frequencySort(String s) {
+        int[][] frequentArr=new int[75][2];
+        for(int i=0;i<s.length();i++){
+            frequentArr[s.charAt(i)-'0']=new int[]{s.charAt(i)-'0',frequentArr[s.charAt(i)-'0'][1]+1};
+        }
+        StringBuilder sb=new StringBuilder();
+        for(int i=0;i<frequentArr.length;i++){
+            buildFrequentMinHeap(frequentArr,0,frequentArr.length-1-i);
+            for(int j=0;j<frequentArr[0][1];j++){
+                sb.append((char)('0'+frequentArr[0][0]));
+            }
+            swap(frequentArr,0,frequentArr.length-1-i);
+        }
+        return sb.reverse().toString();
+    }
+
+    public void buildFrequentMinHeap(int[][] frequentArr, int from, int to){
+        for(int i=(to-1)/2;i>=from;i--){
+            if(2*i+1<=to && frequentArr[i][1]>frequentArr[2*i+1][1]){
+                swap(frequentArr,i,2*i+1);
+                int j=2*i+1;
+                if(2*j+1<=to && frequentArr[j][1]>frequentArr[2*j+1][1] ||
+                        2*j+2<=to && frequentArr[j][1]>frequentArr[2*j+2][1]){
+                    buildFrequentMinHeap(frequentArr,j,to);
+                }
+            }
+
+            if(2*i+2<=to && frequentArr[i][1]>frequentArr[2*i+2][1]){
+                swap(frequentArr,i,2*i+2);
+                int j=2*i+2;
+                if(2*j+1<=to && frequentArr[j][1]>frequentArr[2*j+1][1] ||
+                        2*j+2<=to && frequentArr[j][1]>frequentArr[2*j+2][1]){
+                    buildFrequentMinHeap(frequentArr,j,to);
+                }
+            }
+        }
+    }
+
+    public void swap(int[][] frequentArr,int i,int j){
+        int[] temp=frequentArr[i];
+        frequentArr[i]=frequentArr[j];
+        frequentArr[j]=temp;
+    }
+}
+```
+
+## [264. 丑数 II](https://leetcode-cn.com/problems/ugly-number-ii/)
+
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        Set<Long> set=new HashSet<>();
+        PriorityQueue<Long> heap=new PriorityQueue<>();
+        heap.add(1L);
+        set.add(1L);
+        for(int i=1;i<n;i++){
+            long num = heap.poll();
+            if(!set.contains(num*2)){
+                set.add(num*2);
+                heap.add(num*2);
+            }
+            if(!set.contains(num*3)){
+                set.add(num*3);
+                heap.add(num*3);
+            }
+            if(!set.contains(num*5)){
+                set.add(num*5);
+                heap.add(num*5);
+            }
+        }
+        return (int)(long)heap.poll();
+    }
+}
+```
+
+优化版：
+
+```java
+class Solution {
+    public int nthUglyNumber(int n) {
+        Set<Long> set=new HashSet<>();
+        PriorityQueue<Long> heap=new PriorityQueue<>();
+        heap.add(1L);
+        set.add(1L);
+        for(int i=1;i<n;i++){
+            long num = heap.poll();
+            if(set.add(num*2)){
+                heap.add(num*2);
+            }
+            if(set.add(num*3)){
+                heap.add(num*3);
+            }
+            if(set.add(num*5)){
+                heap.add(num*5);
+            }
+        }
+        return (int)(long)heap.poll();
+    }
+}
+```
+
+## [313. 超级丑数](https://leetcode-cn.com/problems/super-ugly-number/)
+
+方法一：小顶堆
+
+```java
+class Solution {
+    public int nthSuperUglyNumber(int n, int[] primes) {
+        PriorityQueue<Long>queue=new PriorityQueue<>();
+        long res=1;
+        for(int i=1;i<n;i++){
+            for(int prime:primes){
+                queue.add(prime*res);
+            }
+            res=queue.poll();
+            while(!queue.isEmpty()&&res==queue.peek()) queue.poll();  // 去重
+        }
+        return (int)res;
+    }
+}
+```
+
+## [1338. 数组大小减半](https://leetcode-cn.com/problems/reduce-array-size-to-the-half/)
+
+```java
+class Solution {
+    public int minSetSize(int[] arr) {
+        Map<Integer,Integer> map=new HashMap<>();
+        for (int n : arr) {
+            map.put(n,map.getOrDefault(n,0)+1);
+        }
+        PriorityQueue<Integer> heap=new PriorityQueue<>(new Comparator<Integer>() {
+            @Override
+            public int compare(Integer o1, Integer o2) {
+                return o2-o1;
+            }
+        });
+        for (int val : map.values()) {
+            heap.add(val);
+        }
+        int size=0;
+        int res=0;
+        while(size<arr.length/2){
+            size+=heap.poll();
+            res++;
+        }
+        return res;
+    }
+}
+```
 

@@ -397,15 +397,45 @@ MOS是一种常用的主观IQA方法，要求人类评分员为测试图像分�
 >
 > [Shi W, Caballero J, Huszár F, et al. Real-time single image and video super-resolution using an efficient sub-pixel convolutional neural network[C]//Proceedings of the IEEE conference on computer vision and pattern recognition. 2016: 1874-1883.](https://arxiv.org/abs/1609.05158)
 
-
-
-
-
 <img src="D:\blog\source\_drafts\论文阅读-Deep-Learning-for-Image-Super-Resolution-A-Survey\6.png" alt="image-20211104161907149" style="zoom:80%;" />
+
+其运作如下：
+
+1. 假设输入图像尺寸： $3 \times 3$ ，缩放因子： $r$ 
+2. 对输入图像进行Half Padding卷积操作，提取特征，得到 $r^2 \times 3 \times 3$ 特征矩阵
+3. 对特征矩阵进行周期筛选（periodic shuffling），如上图所示排列，得到尺寸为 $r*3 \times r*3$ 的超分图像。
+
+
+
+与转置卷积相比，亚像素卷积拥有更大的感受野。
+
+但由于感受野的分布是不均匀的，而块状区域实际上共享同一感受野，因此可能会在不同块的边界附近产生一些伪影。此外，独立预测块状区域中的相邻像素可能导致不平滑的输出。
+
+为此，出现了sub-pixel layer的改进版：PixelTCL，将独立预测替换为相互依赖的顺序预测，从而生成更平滑、更一致的结果。
+
+> 相关论文：
+>
+> [Gao H, Yuan H, Wang Z, et al. Pixel transposed convolutional networks[J]. IEEE transactions on pattern analysis and machine intelligence, 2019, 42(5): 1218-1227.](https://ieeexplore.ieee.org/document/8618415)
+>
+> 引用量：31
+
+
 
 
 
 #### 超高档模块
+
+超高档模块（Meta Upscale Module）。
+
+<img src="D:\blog\source\_drafts\论文阅读-Deep-Learning-for-Image-Super-Resolution-A-Survey\7.png" alt="image-20211117152323610"  />
+
+> 相关论文：
+>
+> [Hu X, Mu H, Zhang X, et al. Meta-SR: A magnification-arbitrary network for super-resolution[C]//Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition. 2019: 1575-1584.](https://arxiv.org/abs/1903.00875)
+>
+> 引用量：157
+
+
 
 
 
