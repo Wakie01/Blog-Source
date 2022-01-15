@@ -26,7 +26,7 @@
     "hexo-renderer-marked": "^3.2.0",
     "hexo-renderer-stylus": "^1.1.0",
     "hexo-server": "^1.0.0",
-    "shelljs": "^0.8.4",
+    "shelljs": "^0.8.5",
     "valine": "^1.4.14"
   }
 }
