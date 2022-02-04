@@ -170,9 +170,24 @@ Anaconda，就是一个Python环境的管理工具，通过它，可以切换多
    conda remove -n [环境名] --all
    ```
 
-   
+10. pip导出安装包
 
-   
+    ```bash
+    # 导出到当前目录下
+    pip freeze > requirements.txt
+    ```
+
+    
+
+
+
+
+
+
+
+
+
+
 
 
 

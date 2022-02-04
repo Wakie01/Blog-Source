@@ -59,6 +59,8 @@ EESRGAN由三个子网络组成：
 > RRDB架构：
 >
 > ![image-20211120111914647](D:\blog\source\_drafts\论文阅读-Small-Object-Detection-in-Remote-Sensing-Images-with-End-to-End-Edge-Enhanced-GAN-and-Object-Detector-Network\4.png)
+>
+> 相关论文：Wang X, Yu K, Wu S, et al. Esrgan: Enhanced super-resolution generative adversarial networks[C]//Proceedings of the European conference on computer vision (ECCV) workshops. 2018: 0-0.
 
 
 
@@ -105,4 +107,27 @@ $$
 - $L_G ^{Ra}$ ：
 - $L_1$ ：关于PSNR的损失函数
 - $L_{een}$ ：边缘增强网络的损失函数
+
+
+
+
+
+
+
+# 想法
+
+1. 将RRDB中的LReLU换成ELU
+2. 修改RRDB，将Dense Block内部之间的密集连接改为Dense Block与Dense Block之间的密集连接，或许还可以同时减少一次卷积与激活
+3. 跟ESRGAN比较时间
+4. 对比实验参考论文：Pest24: A large-scale very small object data set of agricultural pests for multi-target detection
+5. 用筛选过的ip102_v1.1训练图像超分网络
+6. 改进后的SR网络与SRGAN、SRCNN等网络进行对比实验
+
+参考论文：
+
+[RBDN: Residual Bottleneck Dense Network for Image Super-Resolution](https://ieeexplore.ieee.org/document/9481260)
+
+[Jiang K, Wang Z, Yi P, et al. Edge-enhanced GAN for remote sensing image superresolution[J]. IEEE Transactions on Geoscience and Remote Sensing, 2019, 57(8): 5799-5812.](https://ieeexplore.ieee.org/document/8677274)
+
+[Wang X, Yu K, Wu S, et al. Esrgan: Enhanced super-resolution generative adversarial networks[C]//Proceedings of the European conference on computer vision (ECCV) workshops. 2018: 0-0.]()
 

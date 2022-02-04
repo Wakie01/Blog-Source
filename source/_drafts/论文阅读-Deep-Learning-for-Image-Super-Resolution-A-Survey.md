@@ -9,6 +9,14 @@ addrlink:
 
 
 
+# 论文简介
+Wang Z, Chen J, Hoi S C H. Deep learning for image super-resolution: A survey[J]. IEEE transactions on pattern analysis and machine intelligence, 2020.
+
+引用量：468
+
+
+
+
 基于深度学习的SR方法，从早期的基于CNN到近年来基于生成对抗网络（Generative Adversarial Nets，GAN）
 
 |  方法   | 网络  |                             论文                             | cites |
@@ -78,6 +86,8 @@ $$
 显然，PSNR只关注对应像素之间的差异，而不是视觉感知。
 
 
+
+PSNR的值越小越好
 
 
 
@@ -152,6 +162,10 @@ $$
 其中：$\alpha, \beta, \gamma$ 分别是亮度比较、对比度比较、结构比较的调整因子。
 
 
+
+由公式可见，SSIM是在图像亮度的基础上进行评价。
+
+SSIM的值越接近1越好
 
 
 

@@ -106,16 +106,17 @@ BIO 是一个连接一个线程。,NIO 是一个请求一个线程。,AIO 是一
 
 感兴趣的小伙伴，可以去看[官网](https://docs.oracle.com/javase/tutorial/java/nutsandbolts/datatypes.html)
 
-### 9. Comparator与Comparable有什么区别？
+### 9. Comparator与Comparable有什么区别？   ✓
 在牛客网看到这道题的答案，觉得写的最好~
 
 > 链接：https://www.nowcoder.com/questionTerminal/99f7d1f4f8374e419a6d6924d35d9530
-来源：牛客网
+> 来源：牛客网
+>
 > - Comparable & Comparator 都是用来实现集合中元素的比较、排序的，只是 Comparable 是在集合内部定义的方法实现的排序，Comparator 是在集合外部实现的排序，所以，如想实现排序，就需要在集合外定义 Comparator 接口的方法或在集合内实现 Comparable 接口的方法。
 > -  Comparator位于包java.util下，而Comparable位于包 java.lang下。
 > -  Comparable 是一个对象本身就已经支持自比较所需要实现的接口（如 String、Integer 自己就可以完成比较大小操作，已经实现了Comparable接口） 自定义的类要在加入list容器中后能够排序，可以实现Comparable接口，在用Collections类的sort方法排序时，如果不指定Comparator，那么就以自然顺序排序， 这里的自然顺序就是实现Comparable接口设定的排序方式。
 > -  而 Comparator 是一个专用的比较器，当这个对象不支持自比较或者自比较函数不能满足你的要求时，你可以写一个比较器来完成两个对象之间大小的比较。 
-> - 可以说一个是自已完成比较，一个是外部程序实现比较的差别而已。 用 Comparator 是策略模式（strategy design pattern），就是不改变对象自身，而用一个策略对象（strategy object）来改变它的行为。 比如：你想对整数采用绝对值大小来排序，Integer 是不符合要求的，你不需要去修改 Integer 类（实际上你也不能这么做）去改变它的排序行为，只要使用一个实现了 Comparator 接口的对象来实现控制它的排序就行了。
+> - 可以说一个是自己完成比较，一个是外部程序实现比较的差别而已。 用 Comparator 是策略模式（strategy design pattern），就是不改变对象自身，而用一个策略对象（strategy object）来改变它的行为。 比如：你想对整数采用绝对值大小来排序，Integer 是不符合要求的，你不需要去修改 Integer 类（实际上你也不能这么做）去改变它的排序行为，只要使用一个实现了 Comparator 接口的对象来实现控制它的排序就行了。
 
 ### 10. String类能被继承吗，为什么。  ✓
 首先，String是一个final修饰的类，final修饰的类不可以被继承。
@@ -130,7 +131,19 @@ public final class String
 - 安全性，String 类中有很多调用底层的本地方法，调用了操作系统的 API，如果方法可以重写，可能被植入恶意代码，破坏程序。
 
 
-###  11. 说说Java中多态的实现原理
+
+###  11. 说说Java中多态的实现原理   ✓
+
+> **多态：**
+>
+> 程序中定义的引用变量所指向的具体类型和通过该引用变量发出的方法调用在编程时并不确定，而是在程序运行期间才确定。
+>
+> 即一个引用变量倒底会指向哪个类的实例对象，该引用变量发出的方法调用到底是哪个类中实现的方法，必须在由程序运行期间才能决定。
+>
+> 因为在程序运行时才确定具体的类，这样，不用修改源程序代码，就可以让引用变量绑定到各种不同的类实现上，从而导致该引用变量调用的具体方法随之改变。
+>
+> 即不修改程序代码就可以改变程序运行时所绑定的具体代码，让程序可以选择多个运行状态，这就是多态性。
+
 - 多态机制包括静态多态（编译时多态）和动态多态（运行时多态）
 - 静态多态比如说重载，动态多态一般指在运行时才能确定调用哪个方法。
 - 我们通常所说的多态一般指运行时多态，也就是编译时不确定究竟调用哪个具体方法，一直等到运行时才能确定。
@@ -139,7 +152,7 @@ public final class String
 - Java 里对象方法的调用是依靠类信息里的方法表实现的，对象方法引用调用和接口方法引用调用的大致思想是一样的。当调用对象的某个方法时，JVM查找该对象类的方法表以确定该方法的直接引用地址，有了地址后才真正调用该方法。
 
 举个例子吧，假设有个Fruit父类，一个taste味道方法，两个子类Apple和Pear，如下：
-```
+```java
 abstract class Fruit {
     abstract String taste() ;
 }
@@ -200,25 +213,25 @@ Java获取反射的**三种方法**：
 - 第二种，使用类的.class 方法
 - 第三种，使用实例对象的 getClass() 方法。
 
-### 15. 面向对象的特征
+### 15. 面向对象的特征   ✓
 面向对象的三大特征：
 - 封装
 - 继承
 - 多态
 
-### 16. &和&&的区别
-- 按位与, a&b 表示把a和b都转换成二进制数，再进行与的运算；
-- &和&&都是逻辑运算符号，&&又叫短路运算符
-- 逻辑与，a&& b ，a&b 都表示当且仅当两个操作数均为 true时，其结果才为 true，否则为false。
-- 逻辑与跟短路与的差别是非常巨大的，虽然二者都要求运算符左右两端的布尔值都是true，整个表达式的值才是true。但是，&&之所以称为短路运算，是因为如果&&左边的表达式的值是false，右边的表达式会被直接短路掉，不会进行运算。
+### 16. &和&&的区别   ✓
+- &表示按位与, a&b 表示把a和b都转换成二进制数，再进行与的运算；
+- &和&&都是`逻辑与`运算符号，&&又叫短路运算符
+- 逻辑与，a&&b ，a&b 都表示当且仅当两个操作数均为 true时，其结果才为 true，否则为false。
+- `逻辑与`跟`短路与`的差别是非常巨大的，虽然二者都要求运算符左右两端的布尔值都是true，整个表达式的值才是true。但是，&&之所以称为短路运算，是因为如果&&左边的表达式的值是false，右边的表达式会被直接短路掉，不会进行运算。
 
-### 17. Java中IO流分为几种?
+### 17. Java中IO流分为几种?   ✓
 - Java中的流分为两种：一种是字节流，另一种是字符流。
 - IO流分别由四个抽象类来表示（两输入两输出）:InputStream，OutputStream，Reader，Writer。
 
-### 18. 讲讲类的实例化顺序，比如父类静态数据，构造函数，子类静态数据，构造函数。
+### 18. 讲讲类的实例化顺序，比如父类静态数据，构造函数，子类静态数据，构造函数。   ✓
 直接看个例子吧：
-```
+```java
 public class Parent {
     {
         System.out.println("父类非静态代码块");
@@ -259,74 +272,148 @@ public class Test {
 ```
 
 所以，**类实例化顺序为：**
-父类静态代码块/静态域->子类静态代码块/静态域 -> 父类非静态代码块 -> 父类构造器 -> 子类非静态代码块 -> 子类构造器
+父类静态代码块/静态域 -> 子类静态代码块/静态域  ->  父类非静态代码块  ->  父类构造器  ->  子类非静态代码块  ->  子类构造器
 
-### 19. Java创建对象有几种方式
+### 19. Java创建对象有几种方式   ✓
 Java创建对象有5种方式
 - 用new语句创建对象。
+
 - 使用反射，使用Class.newInstance()创建对象/调用类对象的构造方法——Constructor
+
 - 调用对象的clone()方法。
+
+  > 值得注意的是：调用对象的clone()时，并不会再去执行该对象（和该对象的父类）的静态代码块/静态域、非静态代码块、构造器。
+
 - 运用反序列化手段，调用java.io.ObjectInputStream对象的readObject()方法.
+
 - 使用Unsafe
 
-### 20. 如何将GB2312编码的字符串转换为ISO-8859-1编码的字符串呢？
+### 20. 如何将GB2312编码的字符串转换为ISO-8859-1编码的字符串呢？   ✓
 
-```
+```java
 public class Test {
     public static void main(String[] args) throws UnsupportedEncodingException {
         String str = "捡田螺的小男孩";
         String strIso = new String(str.getBytes("GB2312"), "ISO-8859-1");
-        System.out.println(strIso);
+        System.out.println(strIso);    // 执行输出  ¼ñÌïÂÝµÄÐ¡ÄÐº¢
     }
 }
 ```
-### 21. 守护线程是什么？用什么方法实现守护线程
+### 21. 守护线程是什么？用什么方法实现守护线程   ✓
+
+守护线程是什么？
+
 - 守护线程是运行在后台的一种特殊进程。
 - 它独立于控制终端并且周期性地执行某种任务或等待处理某些发生的事件。
 - 在 Java 中垃圾回收线程就是特殊的守护线程。
+- 只要当前JVM实例中尚存在任何一个非守护线程没有结束，守护线程就全部工作
 
-### 22. notify()和 notifyAll()有什么区别？
+实现守护线程的方法：
+
+```java
+Thread daemonTread = new Thread(); 
+// 设定 daemonThread 为 守护线程，default false(非守护线程) 
+// thread.setDaemon(true)必须在thread.start()之前设置,不能把正在运行的常规线程设置为守护线程
+daemonThread.setDaemon(true);  
+daemonThread.start();
+```
+
+### 22. notify()和 notifyAll()有什么区别？   ✓
 - notify是唤醒一个处于该对象wait的线程，而notifyAll是唤醒所有处于该对象wait的线程。
 - 但是唤醒不等于就能执行了，需要得到锁对象才能有权利继续执行，而锁只有一把，所以多个线程被唤醒时需要争取该锁。
 
 ### 23. Java语言是如何处理异常的，关键字throws、throw、try、catch、finally怎么使用？
 这道面试题，可以看我这篇文章哈：[Java程序员必备：异常的十个关键知识点](https://juejin.im/post/5dc68c0f51882528957fadb3)
 
-### 24. 谈谈Java的异常层次结构
-
-![](https://user-gold-cdn.xitu.io/2020/5/17/17221f084e60767b?w=1280&h=890&f=png&s=352606)
+### 24. 谈谈Java的异常层次结构   ✓
 
 从前从前，有位老人，他的名字叫**Throwable**，他生了两个儿子，大儿子叫**Error**,二儿子叫**Exception**。
 
-**Error**
+- **Error：** 表示编译时或者系统错误，如虚拟机相关的错误，OutOfMemoryError等，error是无法处理的。
 
-表示编译时或者系统错误，如虚拟机相关的错误，OutOfMemoryError等，error是无法处理的。
+- **Exception：** 代码异常，Java程序员关心的基类型通常是Exception。它能被程序本身可以处理，这也是它跟Error的区别。
 
-**Exception**
+  它可以分为RuntimeException（运行时异常）和CheckedException（可检查的异常）。
 
-代码异常，Java程序员关心的基类型通常是Exception。它能被程序本身可以处理，这也是它跟Error的区别。
+  **常见的RuntimeException异常：**
 
-它可以分为RuntimeException（运行时异常）和CheckedException（可检查的异常）。
+  ```
+  - NullPointerException 空指针异常
+  - ArithmeticException 出现异常的运算条件时，抛出此异常
+  - IndexOutOfBoundsException 数组索引越界异常
+  - ClassNotFoundException 找不到类异常
+  - IllegalArgumentException(非法参数异常)
+  ```
 
-**常见的RuntimeException异常：**
+  **常见的 Checked Exception 异常：**
+
+  ```
+  - IOException (操作输入流和输出流时可能出现的异常)
+  - ClassCastException(类型转换异常类)
+  ```
+
+  - Checked Exception就是编译器要求你必须处置的异常。
+  - 与之相反的是，Unchecked Exceptions，它指编译器不要求强制处置的异常，它包括Error和RuntimeException 以及他们的子类。
+
+### 25. 什么是静态内部类，静态内部类与非静态内部类有什么区别
+
+**什么是静态内部类？**
+
+用static关键字修饰的内部类叫作静态内部类，而内部类是指在类中再定义的类，如：
+
+```java
+public class Outer {
+    private static String s1 = "this is s1 in Outer";
+    private static String s2 = "this is s2 in Outer";
+ 
+    public void method1() {
+        // 外部类可通过内部类的对象调用内部类的私有成员变量或方法
+        System.out.println(new Inner().s1);
+        System.out.println(new Inner().method2());
+    }
+ 
+    private static String method2() {
+        return "this is method2 in Outer";
+    }
+ 
+    // 内部静态类
+    public static class Inner {
+        private String s1 = "this is s1 in Inner";
+        private static String s3 = "this is s3 in Inner";
+ 
+        public void method1() {
+            // 内部类可直接访问外部类的私有静态成员变量或方法
+            System.out.println(s2);
+            // 内部类和外部类有同名变量和方法时
+            System.out.println(s1);
+            System.out.println(Outer.s1);
+            System.out.println(method2());
+            System.out.println(Outer.method2());
+        }
+ 
+        private String method2() {
+            return "this is method2 in Inner";
+        }
+    }
+    
+    public static void main(String[] args) {
+        Inner inner=new Inner();
+        inner.method1();
+    }
+}
+
+/* --------------------------输出----------------------------- */
+/**
+this is s2 in Outer
+this is s1 in Inner
+this is s1 in Outer
+this is method2 in Inner
+this is method2 in Outer
+**/
 ```
-- NullPointerException 空指针异常
-- ArithmeticException 出现异常的运算条件时，抛出此异常
-- IndexOutOfBoundsException 数组索引越界异常
-- ClassNotFoundException 找不到类异常
-- IllegalArgumentException(非法参数异常)
-```
 
-**常见的 Checked Exception 异常：**
+**静态内部类与非静态内部类有什么区别？**
 
-```
-- IOException (操作输入流和输出流时可能出现的异常)
-- ClassCastException(类型转换异常类)
-```
-- Checked Exception就是编译器要求你必须处置的异常。
-- 与之相反的是，Unchecked Exceptions，它指编译器不要求强制处置的异常，它包括Error和RuntimeException 以及他们的子类。
-
-### 25. 静态内部类与非静态内部类有什么区别
 这道面试题，可以看我这篇文章哈：[Java程序员必备基础：内部类解析](https://juejin.im/post/5e105e1ef265da5d61695a45)
 
 - 静态内部类可以有静态成员(方法，属性)，而非静态内部类则不能有静态成员(方法，属性)。
@@ -335,7 +422,7 @@ public class Test {
 - 调用内部静态类的方法或静态变量,可以通过类名直接调用
 
 
-### 26. String s与new String与有什么区别
+### 26. String s与new String与有什么区别   ✓
 ```
 String str ="whx";
 String newStr =new String ("whx");
@@ -351,7 +438,7 @@ String newStr =new String ("whx");
 
 如图所示：
 
-![](https://user-gold-cdn.xitu.io/2020/1/30/16ff695269a49781?w=917&h=545&f=png&s=56724)
+![img](D:\blog\source\_drafts\Java基础\1.png)
 
 网上这篇文章讲的挺好的：
 [String和New String()的区别](https://blog.csdn.net/fullstack/article/details/23885879)
@@ -402,24 +489,23 @@ Class.forName和ClassLoader都可以对类进行加载。它们区别在哪里�
 有兴趣可以看我之前写得这篇文章：
 [Java程序员必备：异常的十个关键知识点](https://juejin.im/post/5dc68c0f51882528957fadb3)
 
-### 30. 深拷贝和浅拷贝区别
+### 30. 深拷贝和浅拷贝区别   ✓
 
 **浅拷贝**
 
 复制了对象的引用地址，两个对象指向同一个内存地址，所以修改其中任意的值，另一个值都会随之变化。
-![](https://user-gold-cdn.xitu.io/2020/2/1/16ffca9fd5f38501?w=1140&h=596&f=png&s=68287)
 
 **深拷贝**
 
 将对象及值复制过来，两个对象修改其中任意的值另一个值不会改变
 
-![](https://user-gold-cdn.xitu.io/2020/2/1/16ffcab48469215e?w=1146&h=554&f=png&s=54807)
 
-### 31. JDK 和 JRE 有什么区别？
+
+### 31. JDK 和 JRE 有什么区别？   ✓
 - JDK：Java Development Kit 的简称，Java 开发工具包，提供了 Java 的开发环境和运行环境。
 - JRE：Java Runtime Environment 的简称，Java 运行环境，为 Java 的运行提供了所需环境。
 
-### 32. String 类的常用方法都有那些呢？
+### 32. String 类的常用方法都有那些呢？   ✓
 - indexOf()：返回指定字符的索引。
 - charAt()：返回指定索引处的字符。
 - replace()：字符串替换。
@@ -438,12 +524,12 @@ Class.forName和ClassLoader都可以对类进行加载。它们区别在哪里�
 
 有关于注解，建议大家看一下java编程思想的注解篇章哈~
 
-### 34. 说说你熟悉的设计模式有哪些？
+### 34. 说说你熟悉的设计模式有哪些？   
 
 设计模式分为三大类：
-- 创建型模式：工厂方法模式、抽象工厂模式、单例模式、建造者模式、原型模式（5种）
-- 结构型模式：适配器模式、装饰者模式、代理模式、外观模式、桥接模式、组合模式、享元模式。（7种）
-- 行为型模式：策略模式、模板方法模式、观察者模式、迭代子模式、责任链模式、命令模式、备忘录模式、状态模式、访问者模式、中介者模式、解释器模式。（11种）
+- **创建型模式：** 工厂方法模式、抽象工厂模式、单例模式、建造者模式、原型模式（5种）
+- **结构型模式：** 适配器模式、装饰者模式、代理模式、外观模式、桥接模式、组合模式、享元模式。（7种）
+- **行为型模式：** 策略模式、模板方法模式、观察者模式、迭代子模式、责任链模式、命令模式、备忘录模式、状态模式、访问者模式、中介者模式、解释器模式。（11种）
 
 最好平时积累一下，单例模式（7种实现方式），工厂模式，模板方法设计模式，策略模式，装饰者模式、代理模式这几种怎么写吧~
 
@@ -453,19 +539,25 @@ Class.forName和ClassLoader都可以对类进行加载。它们区别在哪里�
 
 ![](https://user-gold-cdn.xitu.io/2020/5/17/1722243c2208ae97?w=1231&h=321&f=png&s=33937)
 可以看一下这篇文章介绍：[抽象工厂模式-与-工厂方法模式区别](https://blog.csdn.net/wyxhd2008/article/details/5597975)
-### 36. 什么是值传递和引用传递？
+### 36. 什么是值传递和引用传递？   ✓
 - 值传递是对基本型变量而言的,传递的是该变量的一个副本，改变副本不影响原变量.
 - 引用传递一般是对于对象型变量而言的,传递的是该对象地址的一个副本, 并不是原对象本身 。 所以对引用对象进行操作会同时改变原对象.
 
-### 37. 可以在static环境中访问非static变量吗？
-> static变量在Java中是属于类的，它在所有的实例中的值是一样的。当类被Java虚拟机载入的时候，会对static变量进行初始化。因为静态的成员属于类，随着类的加载而加载到静态方法区内存，当类加载时，此时不一定有实例创建，没有实例，就不可以访问非静态的成员。类的加载先于实例的创建，因此静态环境中，不可以访问非静态！
+### 37. 可以在static环境中访问非static变量吗？   ✓
+static变量在Java中是属于类的，它在所有的实例中的值是一样的。
 
-### 38. Java支持多继承么,为什么？
+当类被Java虚拟机载入的时候，会对static变量进行初始化。
+
+因为静态的成员属于类，随着类的加载而加载到静态方法区内存，当类加载时，此时不一定有实例创建，没有实例，就不可以访问非静态的成员。
+
+类的加载先于实例的创建，因此静态环境中，不可以访问非静态！
+
+### 38. Java支持多继承么,为什么？   ✓
 不支持多继承，原因:
 - 安全性的考虑，如果子类继承的多个父类里面有相同的方法或者属性，子类将不知道具体要继承哪个。
 -  Java提供了接口和内部类以达到实现多继承功能，弥补单继承的缺陷。
 
-### 39. 用最有效率的方法计算2乘以8？
+### 39. 用最有效率的方法计算2乘以8？   ✓
 
 ```
 2 << 3
@@ -474,11 +566,11 @@ Class.forName和ClassLoader都可以对类进行加载。它们区别在哪里�
 - 那么，一个数乘以8只要将其左移3位即可。
 - 而cpu直接支持位移运算，且效率最高。
 
-### 40. 构造器是否可被重写？
+### 40. 构造器是否可被重写？   ✓
 构造器是不能被继承的，因为每个类的类名都不相同，而构造器名称与类名相同，所以谈不上继承。 
 又由于构造器不能被继承，所以相应的就不能被重写了。
 
-### 41. char型变量中能不能存贮一个中文汉字，为什么？
+### 41. char型变量中能不能存贮一个中文汉字，为什么？   ✓
  在Java中，char类型占2个字节，而且Java默认采用Unicode编码，一个Unicode码是16位，所以一个Unicode码占两个字节，Java中无论汉子还是英文字母都是用Unicode编码来表示的。所以，在Java中，char类型变量可以存储一个中文汉字。
 
 ```
@@ -491,7 +583,7 @@ System.out.println("char:" + ch);
 - 对象的属性的Class 也实现 Cloneable 接口，在克隆对象时也手动克隆属性，完成深拷贝
 - 结合序列化(JDK java.io.Serializable 接口、JSON格式、XML格式等)，完成深拷贝
 
-### 43. object中定义了哪些方法？
+### 43. object中定义了哪些方法？   ✓
 
 - getClass(); 获取类结构信息
 - hashCode() 获取哈希码
@@ -514,7 +606,7 @@ System.out.println("char:" + ch);
 
 这篇文章讲得挺详细的：[Java中hashCode的作用](https://blog.csdn.net/fenglibing/article/details/8905007)
 
-### 45. for-each与常规for循环的效率对比
+### 45. for-each与常规for循环的效率对比   ✓
 关于这个问题,《Effective Java》给我们做的解答：
 > for-each能够让代码更加清晰，并且减少了出错的机会。 下面的惯用代码适用于集合与数组类型：
 > 
@@ -527,6 +619,7 @@ System.out.println("char:" + ch);
 
 ### 46. 写出几种单例模式实现，懒汉模式和饿汉模式区别
 7种：
+
 - 第一种（懒汉，线程不安全）
 - 第二种（懒汉，线程安全）
 - 第三种（饿汉）
@@ -537,7 +630,7 @@ System.out.println("char:" + ch);
 
 可以看这篇文章：[单例模式的七种写法](https://www.iteye.com/blog/cantellow-838473)
 
-### 47. 请列出 5 个运行时异常。
+### 47. 请列出 5 个运行时异常。   ✓
 
 ```
 - NullPointerException 空指针异常
@@ -546,7 +639,7 @@ System.out.println("char:" + ch);
 - ClassNotFoundException 找不到类异常
 - IllegalArgumentException(非法参数异常)
 ```
-### 48. 2个不相等的对象有可能具有相同的 hashcode吗？
+### 48. 2个不相等的对象有可能具有相同的 hashcode吗？   ✓
 有可能哈~
 
 **hashCode 的常规协定：**
@@ -555,37 +648,49 @@ System.out.println("char:" + ch);
 - 两个对象的equals()相等，那么对这两个对象中的每个对象调用 hashCode 方法都必须生成相同的整数结果。
 - 两个对象的equals()不相等，那么对这两个对象中的任一对象上调用 hashCode 方法不要求一定生成不同的整数结果。但是，为不相等的对象生成不同整数结果可以提高哈希表的性能。
 
-### 49. 访问修饰符public,private,protected,以及default的区别？
+### 49. 访问修饰符public,private,protected,以及default的区别？   ✓
 
-![](https://user-gold-cdn.xitu.io/2020/5/17/172222190f5c2bf7?w=1232&h=276&f=png&s=23829)
+**public：**
 
-### 50. 谈谈final在java中的作用？
+- 公开的，对所有类都可见，类、接口、变量、方法都可以被它修饰
+
+**private：**
+
+- 私有的，除了本类之外被它修饰的方法、变量不能其他得类所访问，不能修饰类
+
+**protected：**
+
+- 受保护的，修饰的变量、方法只能被同一包下的类访问，也不可以修饰类
+
+**default：**
+
+- 默认的，不写修饰符即为default，类、接口、变量、方法都可以被它修饰，被它修饰后只能被当前类和同包下的类访问。
+
+![img](D:\blog\source\_drafts\Java基础\2.png)
+
+### 50. 谈谈final在java中的作用？   ✓
 - final 修饰的类叫最终类，该类不能被继承。
 - final 修饰的方法不能被重写。
 - final 修饰的变量叫常量，常量必须初始化，初始化之后值就不能被修改。
 
-### 51. java中的Math.round(-1.5) 等于多少呢？
-
-![](https://user-gold-cdn.xitu.io/2020/5/17/172228be1252e870?w=847&h=394&f=png&s=44655)
+### 51. java中的Math.round(-1.5) 等于多少呢？   ✓
 
 JDK 中的 java.lang.Math 类:
-- round() ：返回四舍五入，负 .5 小数返回较大整数，如 -1.5 返回 -1。
+- round() ：返回四舍五入，负0.5 小数返回较大整数，如 -1.5 返回 -1，-1.6返回-2。
 - ceil() ：返回小数所在两整数间的较大值，如 -1.5 返回 -1.0。
 - floor() ：返回小数所在两整数间的较小值，如 -1.5 返回 -2.0。
 
-### 52. String属于基础的数据类型吗？
+### 52. String属于基础的数据类型吗？   ✓
 String 不属于基础类型，基础类型有 8 种：byte、boolean、char、short、int、float、long、double，而 String 属于对象。
 
-### 53. 如何将字符串反转呢？
+### 53. 如何将字符串反转呢？   ✓
 - 使用 StringBuilder 或 StringBuffer 的 reverse 方法，本质都调用了它们的父类 AbstractStringBuilder 的 reverse 方法实现。（JDK1.8）
 - 使用chatAt函数，倒过来输出；
 
-![](https://user-gold-cdn.xitu.io/2020/5/17/1722295d9a7ea883?w=855&h=557&f=png&s=56301)
-
-### 54. 描述动态代理的几种实现方式，它们分别有什么优缺点
+### 54. 描述动态代理的几种实现方式，它们分别有什么优缺点   ✓
 - JDK动态代理
 - CGLIB动态代理
-- JDK原声动态代理时java原声支持的、不需要任何外部依赖、但是它只能基于接口进行代理
+- JDK原声动态代理时java原生支持的、不需要任何外部依赖、但是它只能基于接口进行代理
 - CGLIB通过继承的方式进行代理、无论目标对象没有没实现接口都可以代理，但是无法处理final的情况
 
 ### 55. 在自己的代码中，如果创建一个java.lang.String类，这个类是否可以被类加载器加载？为什么。
@@ -610,7 +715,7 @@ Java 泛型（generics）是 JDK 5 中引入的一个新特性，其本质是参
 ### 58. 什么是序列化，怎么序列化，反序列呢？
 - 序列化：把Java对象转换为字节序列的过程
 - 反序列：把字节序列恢复为Java对象的过程
-![](https://user-gold-cdn.xitu.io/2020/5/17/17222b156f8b230e?w=1280&h=487&f=png&s=189822)
+
 
 可以看我这篇文章哈~ [Java程序员必备：序列化全方位解析](https://juejin.im/post/5e7f150d51882573b3309ceb)
 
@@ -656,18 +761,29 @@ public class Outer {
 可以看我这篇文章哈~[Java程序员必备基础：内部类解析](https://juejin.im/post/5e105e1ef265da5d61695a45)
 
 
-### 61. break和continue有什么区别？
+### 61. break和continue有什么区别？   ✓
 - break可以使流程跳出switch语句体，也可以在循环结构终止本层循环体，从而提前结束本层循环。
 - continue的作用是跳过本次循环体中余下尚未执行的语句，立即进行下一次的循环条件判定，可以理解为仅结束本次循环
 
-### 62. String s = "Hello";s = s + " world!";这两行代码执行后，原始的 String 对象中的内容是否会改变？
-没有。因为 String 被设计成不可变(immutable)类，所以它的所有对象都是不可变对象。
+### 62. String s = "Hello";s = s + " world!";这两行代码执行后，原始的 String 对象中的内容是否会改变？   ✓
+- 没有。因为String是不可变类（immutable class），不可变类，顾名思义就是说类的实例是不可被修改的。实例的信息是在创建的时候提供，并且在整个生命周期中都不可改变。在这段代码中，s原来指向一个String对象，内容是“hello”，然后我们对s进行了+操作，那么s所指向的那个对象是否发生了改变呢？答案是没有。这时，s不指向原来那个对象了，而指向了另一个String对象，内容为”helloworld！",原来那个对象还存在内存中，只是s这个引用变量不再指向他了。
 
-### 63. String s="a"+"b"+"c"+"d";创建了几个对象？
+- 通过上面的说明，我们很容易得出一个结论，如果经常对字符串进行各种各样的修改，或者说，不可预见的修改，那么使用String来代表字符串的话会引起很大的内存开销。因为，String对象建立后不能改变，所以对于每一个不同的字符串，都需要一个String对象来表示。这时，应该考虑使用StringBuffer类，他允许修改，而不是每个不同的字符串都要生成一个新的对象。并且，这两种类的对象转换十分容易。
+
+- 对于字符串常量，如果内容相同，Java认为它们代表同一个String对象。而用关键字new调用构造器，总是会创建一个新的对象，无论内容是否相同。
+
+- 至于为什么要把String类设计成不可变类，是它的用途决定的。其实不只String，很多Java标准类库中的类都是不可变的。在开发一个系统的时候，我们有时候也需要设计不可变类，来传递一组相关的值，这也是面向对象思想的体现。不可变类有一些优点，比如因为它的对象是只读的，所以多线程并发访问也不会有任何问题。当然也有一些缺点，比如每个不同的状态都要一个对象来代表，可能会造成性能上的问题。所以Java标准类库还提供了一个可变版本，即 StringBuffer。
+
+- 是否可以继承String类？String类是由final关键字修饰的，故不可以被继承。
+
+### 63. String s="a"+"b"+"c"+"d";创建了几个对象？   ✓
 1个而已啦。
 > Java 编译器对字符串常量直接相加的表达式进行优化，不等到运行期去进行加法运算，在编译时就去掉了加号，直接将其编译成一个这些常量相连的结果。所以 "a"+"b"+"c"+"d" 相当于直接定义一个 "abcd" 的字符串。
 
-### 64. try-catch-finally-return执行顺序
+### 64. try-catch-finally-return执行顺序   ✓
+
+[JAVA中try、catch、finally带return的执行顺序总结](https://www.cnblogs.com/pcheng/p/10968841.html)
+
 try-catch-finally-return 执行描述:
 - 如果不发生异常，不会执行catch部分。
 - 不管有没有发生异常，finally都会执行到。
@@ -766,7 +882,7 @@ public class Java7TryResourceTest {
 - switch可作用于char byte short int对应的包装类
 - switch不可作用于long double float boolean，以及他们的包装类
 
-### 68. 数组有没有length()方法？String有没有length()方法？
+### 68. 数组有没有length()方法？String有没有length()方法？   ✓
 - 数组没有length()方法，而是length；
 - String有length()方法
 
@@ -776,7 +892,7 @@ public class Java7TryResourceTest {
 - 当一个static方法被调用时，可能还没有创建任何实例对象，如果从一个static方法中发出对非static方法的调用，那个非static方法是关联到哪个对象上的呢？这个逻辑是不成立的
 - 因此，一个static方法内部不可以发出对非static方法的调用。
 
-### 70. String s = new String("jay");创建了几个字符串对象？
+### 70. String s = new String("jay");创建了几个字符串对象？   ✓
 一个或两个
 > - 第一次调用 new String("jay"); 时，会在堆内存中创建一个字符串对象，同时在字符串常量池中创建一个对象 "jay"
 > - 第二次调用 new String("jay"); 时，只会在堆内存中创建一个字符串对象，指向之前在字符串常量池中创建的 "jay"
@@ -784,8 +900,9 @@ public class Java7TryResourceTest {
 可以看老王这篇文章，很清晰~
 [别再问我 new 字符串创建了几个对象了！我来证明给你看！](https://mp.weixin.qq.com/s?__biz=MzIwOTE2MzU4NA==&mid=2247484162&idx=1&sn=ff743ff5c975a373036749490042a868&chksm=9779472da00ece3b6186d8ce8e79cd1503311327ad4b38f569ccd29a9d15dec065ff201480d2&token=815554431&lang=zh_CN#rd)
 
-### 71. this和super关键字的作用
-this：
+### 71. this和super关键字的作用   ✓
+**this：**
+
 - 对象内部指代自身的引用
 - 解决成员变量和局部变量同名问题
 - 可以调用成员变量，不能调用局部变量
@@ -793,11 +910,12 @@ this：
 - 在普通方法中可以省略 this
 - 在静态方法当中不允许出现 this 关键字
 
-super：
+**super：**
+
 - 调用父类 的成员或者方法
 - 调用父类的构造函数
 
-### 72. 我们能将int强制转换为 byte类型的变量吗？如果该值大于byte 类型的范围，将会出现什么现象？
+### 72. 我们能将int强制转换为 byte类型的变量吗？如果该值大于byte 类型的范围，将会出现什么现象？   ✓
 可以，我们可以做强制转换，但是在Java中，int是32位，byte是8位，如果强制做转化，int类型的高24位将会被丢弃。
 
 ```
@@ -816,17 +934,25 @@ public class Test {
 -127
 10
 ```
-### 73. float f=3.4;正确吗？
-不正确，精度不准确,应该用强制类型转换
-![11](https://user-gold-cdn.xitu.io/2020/5/17/17222ee41ca4cc4c?w=466&h=125&f=png&s=8438)
+### 73. float f=3.4;正确吗？   ✓
+不正确，赋值运算符 "=" 左右两边的精度类型不匹配。
+
+Java中，有小数点的默认被存储为double类型，即双精度；而float类型的变量为单精度。
+
+可以使用强转或加f，即 float f = (folat)3.4 或者 float f = 3.4f。
 
 ### 74. 接口可否继承接口？抽象类是否可实现接口？抽象类是否可继承实体类？
 都可以的
-### 75. Reader和InputStream区别？
+
+接口可以继承接口，而抽象类不可以继承接口，但可以实现接口。
+
+
+
+### 75. Reader和InputStream区别？   ✓
 - InputStream是表示字节输入流的所有类的超类
 - Reader是用于读取字符流的抽象类
 
-### 76. 列举出JAVA中6个比较常用的包
+### 76. 列举出JAVA中6个比较常用的包   ✓
 - java.lang;
 - java.util;
 - java.io;
@@ -841,7 +967,7 @@ public class Test {
 - 泛型推导
 - 多异常统一处理
 
-### 78. 同步和异步有什么区别？
+### 78. 同步和异步有什么区别？   ✓
 - 同步，可以理解为在执行完一个函数或方法之后，一直等待系统返回值或消息，这时程序是出于阻塞的，只有接收到返回的值或消息后才往下执行其他的命令。
 - 异步，执行完函数或方法后，不必阻塞性地等待返回值或消息，只需要向系统委托一个异步过程，那么当系统接收到返回值或消息时，系统会自动触发委托的异步过程，从而完成一个完整的流程。
 - 同步，就是实时处理（如打电话）
@@ -849,10 +975,42 @@ public class Test {
 
 参考这篇文章~ [同步和异步的区别](https://blog.csdn.net/tennysonsky/article/details/45111623)
 
-### 79. 实际开发中，Java一般使用什么数据类型来代表价格？
+### 79. 实际开发中，Java一般使用什么数据类型来代表价格？   ✓
 java中使用BigDecimal来表示价格是比较好的。
 
 可以看这篇文章，写得非常好
 [老大说：谁要再用double定义商品金额，就自己收拾东西走](https://mp.weixin.qq.com/s?__biz=MzU4ODI1MjA3NQ==&mid=2247485507&idx=1&sn=5c65f4a62ceab57a23bfe810a161035b&chksm=fddede87caa957918b6c131440c2c7aba5b21d72b296588776c6b85b6f8934bb4b6bfda97858&token=815554431&lang=zh_CN#rd)
-### 80. 64 位 JVM 中，int 的长度是多数？
+
+### 80. 64 位 JVM 中，int 的长度是多数？   ✓
 int数据类型占4个字节 32位，跟JVM位数没关系的
+
+
+### 81. String与StringBuffer的区别   ✓
+
+- 简单地说，就是一个变量和常量的关系。StringBuffer对象的内容可以修改；而String对象一旦产生后就不可以被修改，重新赋值其实是两个对象。
+- StringBuffer的内部实现方式和String不同，StringBuffer在进行字符串处理时，不生成新的对象，在内存使用上要优于String类。所以在实际使用时，如果经常需要对一个字符串进行修改，例如插入、删除等操作，使用StringBuffer要更加适合一些。
+- String：在String类中没有用来改变已有字符串中的某个字符的方法，由于不能改变一个Java字符串中的某个单独字符，所以在JDK文档中称String类的对象是不可改变的。然而，不可改变的字符串具有一个很大的优点：编译器可以把字符串设为共享的。 
+- StringBuffer：StringBuffer类属于一种辅助类，可预先分配指定长度的内存块建立一个字符串缓冲区。这样使用StringBuffer类的append方法追加字符 比 String使用 + 操作符添加字符 到 一个已经存在的字符串后面有效率得多。因为使用 + 操作符每一次将字符添加到一个字符串中去时，字符串对象都需要寻找一个新的内存空间来容纳更大的字符串，这无凝是一个非常消耗时间的操作。添加多个字符也就意味着要一次又一次的对字符串重新分配内存。使用StringBuffer类就避免了这个问题。
+  StringBuffer是线程安全的，在多线程程序中也可以很方便的进行使用，但是程序的执行效率相对来说就要稍微慢一些。
+- StringBuffer类中的方法要偏重于对字符串的变化例如追加、插入和删除等，这个也是StringBuffer和String类的主要区别。
+
+
+
+### 82. 描述一下abstract修饰符   ✓
+
+abstract修饰符可用于修饰类（抽象类）和方法（抽象方法）
+
+**抽象类：**
+
+- 抽象类不能用来实例化对象，声明抽象类的唯一目的是为了将来对该类进行扩充。
+- 一个类不能同时被 abstract 和 final 修饰。如果一个类包含抽象方法，那么该类一定要声明为抽象类，否则将出现编译错误。
+- 抽象类可以包含抽象方法和非抽象方法。
+
+**抽象方法：**
+
+- 抽象方法是一种没有任何实现的方法，该方法的的具体实现由子类提供。
+- 抽象方法不能被声明成 final 和 static。
+- 任何继承抽象类的子类必须实现父类的所有抽象方法，除非该子类也是抽象类。
+- 如果一个类包含若干个抽象方法，那么该类必须声明为抽象类。抽象类可以不包含抽象方法。
+- 抽象方法的声明以分号结尾，例如：`public abstract sample();` 。
+

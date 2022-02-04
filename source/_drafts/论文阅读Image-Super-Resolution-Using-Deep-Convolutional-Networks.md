@@ -8,9 +8,9 @@ addrlink:
 ---
 
 
-# 标题
+# 论文简介
 
-**Image Super-Resolution Using Deep Convolutional Networks**
+Chao Dong, Chen Change Loy, Kaiming He, Xiaoou Tang: Image Super-Resolution Using Deep Convolutional Networks. IEEE Trans. Pattern Anal. Mach. Intell. 38(2): 295-307 (2016)
 
 
 
