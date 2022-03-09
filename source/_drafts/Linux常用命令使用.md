@@ -265,6 +265,15 @@ mv /home/Download/Python3.9.0 /usr/local/python3      # 移动Download下的Pyth
    /home/wxx/modelzoo-master/built-in/PyTorch/Official/cv/image_classification/CRNN_for_PyTorch/test/env_npu.sh
    /home/wxx/modelzoo-master/built-in/PyTorch/Official/cv/image_classification/DeepMar_for_PyTorch/env_npu.sh
    ```
+   
+2. **find命令**
+
+   ```bash
+   # 从根目录寻找名为cudnn_version.h的文件
+   find / -name cudnn_version.h
+   ```
+
+   
 
 
 
@@ -1037,7 +1046,9 @@ Codename:       bionic
 # nvidia 显卡
 nvidia-smi
 
-
+# 实时查看显存信息
+# 3 指的是每个3秒刷新一下
+watch -n 3 nvidia-smi    
 ```
 
 ## 查看代理

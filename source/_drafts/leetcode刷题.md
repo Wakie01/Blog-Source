@@ -72,27 +72,6 @@ class Solution {
 }
 ```
 
-## [122. 买卖股票的最佳时机 II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/)
-
-把每日的盈利加起来，盈利就加
-
-```java
-class Solution {
-    public int maxProfit(int[] prices) {
-        int profit=0;
-        int now=0,futrue=1;
-        while(futrue<prices.length){
-            if(prices[futrue]>prices[now]){
-                profit+=(prices[futrue]-prices[now]);
-            }
-            futrue++;
-            now++;
-        }
-        return profit;
-    }
-}
-```
-
 
 
 ## [1716. 计算力扣银行的钱](https://leetcode-cn.com/problems/calculate-money-in-leetcode-bank/)
@@ -3417,6 +3396,219 @@ class Solution {
 }
 ```
 
+## [236. 二叉树的最近公共祖先](https://leetcode-cn.com/problems/lowest-common-ancestor-of-a-binary-tree/)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null) return null;
+        // 如果p,q为根节点，则公共祖先为根节点
+        if(root.val==p.val || root.val==q.val) return root;
+        // p和q都在root的左边
+        if(find(root.left,p.val) && find(root.left,q.val)){
+            return lowestCommonAncestor(root.left,p,q);
+        }
+        // p和q都在root的右边
+        if(find(root.right,p.val) && find(root.right,q.val)){
+            return lowestCommonAncestor(root.right,p,q);
+        }
+        // p和q分别在root的两边
+        return root;
+    }
+    
+    public boolean find(TreeNode root,int target){
+        if(root==null) return false;
+        if(root.val==target) return true;
+        return find(root.left,target) || find(root.right,target);
+    }
+}
+```
+
+优化：
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode(int x) { val = x; }
+ * }
+ */
+class Solution {
+    public TreeNode lowestCommonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        if(root==null) return null;
+        // 判断当前节点是否为p或q，若是就直接返回，不再继续往下寻找
+        if(root.val==p.val || root.val==q.val) return root;
+        
+        // 先序遍历，寻找root节点下p与q的节点
+        TreeNode left=lowestCommonAncestor(root.left,p,q);
+        TreeNode right=lowestCommonAncestor(root.right,p,q);
+                
+        if(left==null && right==null) return null;   // 没找到
+        else if(left==null) return right;     // 只寻找到一个，即两个节点都位于root的一侧，且为右侧
+        else if(right==null) return left;     // 只寻找到一个，即两个节点都位于root的一侧，且为左侧
+        else return root;   // 找到两个，即两个节点都位于root的两侧
+    }
+}
+```
+
+## [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+
+方法：求节点的`左子树最大高度+右子树最大高度`的最大值
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    private int max;
+    public int diameterOfBinaryTree(TreeNode root) {
+        max=0;
+        dfs(root);
+        return max;
+    }
+
+    // 计算每个节点的最大高度
+    public int dfs(TreeNode root){
+        if(root.left==null && root.right==null) return 0;
+        
+        int left=0,right=0;
+        if(root.left!=null){
+            left=dfs(root.left)+1;
+        }
+        if(root.right!=null){
+            right=dfs(root.right)+1;
+        }
+        // 判断该节点的”左子树最大高度+右子树最大高度“是否为最大值
+        max=Math.max(max,left+right);
+        // 返回该节点的最大高度
+        return Math.max(left,right);
+    }
+}
+```
+
+## [124. 二叉树中的最大路径和](https://leetcode-cn.com/problems/binary-tree-maximum-path-sum/)
+
+类比 [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+
+    private int max=-1001;
+    public int maxPathSum(TreeNode root) {
+        dfs(root);
+        return max;
+    }
+
+    public int dfs(TreeNode root){
+        if(root==null) {
+            return 0;
+        }
+        
+        // 负数的直接过滤掉
+        int left=Math.max(0,dfs(root.left));
+        int right=Math.max(0,dfs(root.right));
+        max=Math.max(max,root.val+left+right);
+
+        return Math.max(left,right)+root.val;
+    }
+}
+```
+
+## [687. 最长同值路径](https://leetcode-cn.com/problems/longest-univalue-path/)
+
+类比 [543. 二叉树的直径](https://leetcode-cn.com/problems/diameter-of-binary-tree/)
+
+```java
+/**
+ * Definition for a binary tree node.
+ * public class TreeNode {
+ *     int val;
+ *     TreeNode left;
+ *     TreeNode right;
+ *     TreeNode() {}
+ *     TreeNode(int val) { this.val = val; }
+ *     TreeNode(int val, TreeNode left, TreeNode right) {
+ *         this.val = val;
+ *         this.left = left;
+ *         this.right = right;
+ *     }
+ * }
+ */
+class Solution {
+    
+    private int max=0;
+    public int longestUnivaluePath(TreeNode root) {
+        if(root==null) return 0;
+        dfs(root);
+        return max;
+    }
+
+    public int dfs(TreeNode root){
+        if(root.left==null && root.right==null) return 0;
+
+        int left=root.left==null? 0:dfs(root.left);
+        int right=root.right==null? 0:dfs(root.right);
+
+        if(root.left!=null && root.val==root.left.val){
+            ++left;
+        }else{
+            left=0;
+        }
+        if(root.right!=null && root.val==root.right.val){
+            ++right;
+        }else{
+            right=0;
+        }
+
+        max=Math.max(max,left+right);
+        return Math.max(left,right);
+    }
+}
+```
+
+
+
+
+
 
 
 
@@ -3738,6 +3930,60 @@ class Solution {
     }
 }
 ```
+
+## [406. 根据身高重建队列](https://leetcode-cn.com/problems/queue-reconstruction-by-height/)
+
+**一般这种数对，还涉及排序的，根据第一个元素正向排序，根据第二个元素反向排序，或者根据第一个元素反向排序，根据第二个元素正向排序，往往能够简化解题过程。** 
+
+在这题中，先对输入数组排序，h升序，k降序，从头循环遍历，**当前这个人就是剩下未安排的人中最矮的人，他的k值就代表他在剩余空位的索引值，**如果有多个人高度相同，要按照k值从大到小领取索引值，示例：
+
+```json
+剩余空位的索引值          people数组   queue数组的索引值 
+[ 0, 1, 2, 3, 4, 5 ]   [ 4, 4 ]     4
+[ 0, 1, 2, 3, 5 ]      [ 5, 2 ]     2
+[ 0, 1, 3, 5 ]         [ 5, 0 ]     0
+[ 1, 3, 5 ]            [ 6, 1 ]     3
+[ 1, 5 ]               [ 7, 1 ]     5
+[ 1 ]                  [ 7, 0 ]     1
+[ [ 5, 0 ], [ 7, 0 ], [ 5, 2 ], [ 6, 1 ], [ 4, 4 ], [ 7, 1 ] ]
+```
+
+```java
+class Solution {
+    public int[][] reconstructQueue(int[][] people) {
+        // 剩余空位的索引值
+        List<Integer> indexs=new ArrayList<>();
+        for(int i=0;i< people.length;i++){
+            indexs.add(i);
+        }
+        // 对people数组进行排序，h升序，k降序
+        Arrays.sort(people, new Comparator<int[]>() {
+            @Override
+            public int compare(int[] p1, int[] p2) {
+                if(p1[0]==p2[0]){
+                    return p2[1]-p1[1];
+                }else{
+                    return p1[0]-p2[0];
+                }
+            }
+        });
+        
+        // 队列
+        int[][] queue=new int[people.length][2];
+        // 遍历people数组
+        for (int[] person : people) {
+            // person在新队列的位置为：indexs.get(person[1])
+            queue[indexs.get(person[1])]=person;
+            // 更新剩余空位的索引值
+            indexs.remove(person[1]);
+        }
+        
+        return queue;
+    }
+}
+```
+
+
 
 
 
@@ -4562,6 +4808,36 @@ class Solution {
 }
 ```
 
+## [917. 仅仅反转字母](https://leetcode-cn.com/problems/reverse-only-letters/)
+
+```java
+class Solution {
+    public String reverseOnlyLetters(String s) {
+        int left=0,right=s.length()-1;
+        StringBuilder sb=new StringBuilder(s);
+        while(left<right){
+            char l=sb.charAt(left);
+            if((l<'a' || l>'z') && (l<'A' || l>'Z')){
+                ++left;
+                continue;
+            }
+            char r=sb.charAt(right);
+            if((r<'a' || r>'z') && (r<'A' || r>'Z')){
+                --right;
+                continue;
+            }
+            sb.setCharAt(left++,r);
+            sb.setCharAt(right--,l);
+        }
+        return sb.toString();
+    }
+}
+```
+
+
+
+
+
 
 
 
@@ -4602,6 +4878,250 @@ public int maxProfit(int[] prices) {
     return maxprofit;
 }
 ```
+
+方法三：动态规划，
+
+`第i天的最大利润=Math.max(第i-1天的最大利润，第i天的股价-前i天的最低股价)`
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        if(prices==null || prices.length==0) return 0;
+        int min=prices[0];   // 股票最低价格
+        int max=0;   // 最大利润
+        for(int i=1;i<prices.length;i++){
+            max=Math.max(max,prices[i]-min);
+            if(min>prices[i]){
+                min=prices[i];
+            }
+        }
+        return max;
+    }
+}
+```
+
+
+
+
+
+
+
+## [122. 买卖股票的最佳时机 II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/)
+
+方法一：贪心法，只要今天价格小于明天价格就在今天买入，然后明天卖出。
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int profit=0;
+        int now=0,futrue=1;
+        while(futrue<prices.length){
+            if(prices[futrue]>prices[now]){
+                profit+=(prices[futrue]-prices[now]);
+            }
+            futrue++;
+            now++;
+        }
+        return profit;
+    }
+}
+```
+
+优化：
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        int profit=0;
+        for(int i=1;i<prices.length;i++){
+            if(prices[i]>prices[i-1]){
+                profit+=(prices[i]-prices[i-1]);
+            }
+        }
+        return profit;
+    }
+}
+```
+
+方法二：动态规划
+
+分别记录每一天持有股票与不持有股票的最大利润：
+
+1. 第i天持有股票的利润来源：
+   - 第i-1天持有股票时的利润
+   - 第i-1天不持有股票，然后第i天购买股票后的利润
+2. 第i天不持有股票的利润来源：
+   - 第i-1天不持有股票时的利润
+   - 第i-1天持有股票，然后第i天售出股票后的利润
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        // dp[i][0]: 第i天不持有股票的最大利润
+        // dp[i][1]: 第i天持有股票的最大利润
+        // dp[i][0]=Max(第i-1天不持有股票的最大利润，第i-1天持有股票的最大利润+第i天的股价)
+        // dp[i][1]=Max(第i-1天持有股票的最大利润，第i-1天不持有股票的最大利润-第i天的股价)
+        int[][] dp=new int[prices.length][2];
+        dp[0][0]=0;
+        dp[0][1]=-prices[0];  //第0天买了股票，所以利润为-prices[0]
+        for(int i=1;i<prices.length;i++){
+            dp[i][0]=Math.max(dp[i-1][0] , dp[i-1][1]+prices[i]);
+            dp[i][1]=Math.max(dp[i-1][1] , dp[i-1][0]-prices[i]);
+        }
+
+        return dp[prices.length-1][0];
+    }
+}
+```
+
+## [309. 最佳买卖股票时机含冷冻期](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/)
+
+方法：动态规划
+
+第i天有下列三种情况：
+
+1. 不持有股票
+2. 持有股票
+3. 进入冷冻期
+
+一般来说，第i天持有股票的利润 有两种情况：
+
+1. 第i-1天持有股票的最大利润
+2. 第i-1天不持有股票的最大利润-第i天的股票价格
+
+为了实现上述第二点，得确保 第i-1天不持有股票 时，没有卖出股票，为此，第i天不持有股票的利润 有两种情况：
+
+1. 第i-1天不持有股票的最大利润
+2. 第i-1天进入冷冻期时的最大利润，这样，第 i+1 天就可以买股票了
+
+至于 第i天进入冷冻期时的最大利润 为 第i-1天持有股票的最大利润 + 第i天的股票价格
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        // dp[i][0]: 第i天不持有股票时的最大利润
+        // dp[i][1]: 第i天持有股票时的最大利润
+        // dp[i][2]: 第i天是否为冷冻期   0：不是冷冻期    1：冷冻期
+
+        // 第i天不持有股票时的最大利润=Max(第i-1天不持有股票时的最大利润, 第i-1天进入冷冻期的最大利润)
+        // 这样 第i+1天不持有股票时的最大利润 肯定度过了冷冻期
+        // 第i天持有股票时的最大利润=Max(第i-1天持有股票时的最大利润, 第i-1天不持有股票时的最大利润-第i天股票的价格)
+        // 第i天进入冷冻期的最大利润=第i-1天持有股票的最大利润+第i天股票的价格
+        int[][] dp=new int[prices.length][3];
+        dp[0][0]=0;
+        dp[0][1]=-prices[0];
+        dp[0][2]=0;
+        for(int i=1;i<prices.length;i++){
+            
+            dp[i][0]=Math.max(dp[i-1][0],dp[i-1][2]);
+            dp[i][1]=Math.max(dp[i-1][1],dp[i-1][0]-prices[i]);
+            dp[i][2]=dp[i-1][1]+prices[i];
+
+        }
+
+        return Math.max(dp[prices.length-1][0],dp[prices.length-1][2]);
+    }
+}
+```
+
+## [714. 买卖股票的最佳时机含手续费](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/)
+
+方法：动态规划， 参考 [122. 买卖股票的最佳时机 II](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-ii/)
+
+```java
+class Solution {
+    public int maxProfit(int[] prices, int fee) {
+        // dp[i][0]: 第i天不持有股票时的最大利润
+        // dp[i][1]: 第i天持有股票时的最大利润
+        int[][] dp=new int[prices.length][2];
+        dp[0][0]=0;
+        dp[0][1]=-prices[0];
+
+        for(int i=1;i<prices.length;i++){
+            dp[i][0]=Math.max(dp[i-1][0],dp[i-1][1]+prices[i]-fee);
+            dp[i][1]=Math.max(dp[i-1][1],dp[i-1][0]-prices[i]);
+        }
+
+        return dp[prices.length-1][0];
+    }
+}
+```
+
+## [123. 买卖股票的最佳时机 III](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/)
+
+方法一：动态规划，允许同一天进行两次交易
+
+```java
+class Solution {
+    public int maxProfit(int[] prices) {
+        // dp[i][0]: 第i天第一次买入股票的最大利润 = Max(第i-1天第一次买入股票的最大利润, -第i天的股价)
+        // dp[i][1]: 第i天第一次出售股票的最大利润 = Max(第i-1天第一次出售股票的最大利润, 第i-1天第一次买入股票的最大利润+第i天的股价)
+        // dp[i][2]: 第i天第二次买入股票的最大利润 = Max(第i-1天第二次买入股票的最大利润, 第i-1天第一次出售股票的最大利润-第i天的股价)
+        // dp[i][3]: 第i天第二次出售股票的最大利润 = Max(第i-1天第二次出售股票的最大利润, 第i-1天第二次买入股票的最大利润+第i天的股价)
+        int[][] dp=new int[prices.length][4];
+        dp[0][0]=-prices[0];
+        dp[0][1]=0;
+        // 关键，代表没有买入股票，若设置为0，则意味着第0天第一次出售股票的最大利润为0
+        dp[0][2]=Integer.MIN_VALUE;   
+        dp[0][3]=0;
+
+        for(int i=1;i<prices.length;i++){
+            dp[i][0]=Math.max(dp[i-1][0], -prices[i]);
+            dp[i][1]=Math.max(dp[i-1][1], dp[i-1][0]+prices[i]);
+            dp[i][2]=Math.max(dp[i-1][2], dp[i-1][1]-prices[i]);
+            dp[i][3]=Math.max(dp[i-1][3], dp[i-1][2]+prices[i]);
+        }
+
+        return Math.max(dp[prices.length-1][1], dp[prices.length-1][3]);
+    }
+}
+```
+
+## [188. 买卖股票的最佳时机 IV](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iv/)
+
+方法：动态规划，类比 [123. 买卖股票的最佳时机 III](https://leetcode-cn.com/problems/best-time-to-buy-and-sell-stock-iii/)
+
+```java
+class Solution {
+    public int maxProfit(int k, int[] prices) {
+        if(k==0 || prices.length==0) return 0;
+
+        // dp[i][j]: 设 d=j/2, n=j%2
+        // dp[i][j] 表示：第i天中的第d次交易股票的最大利润
+        // 其中当n=0时, 为买入股票; 当n=1时, 为出售股票
+        int[][] dp=new int[prices.length][2*k];
+        
+        // 初始化dp
+        dp[0][0]=-prices[0];
+        for(int i=2;i<2*k;i+=2){
+            dp[0][i]=Integer.MIN_VALUE;
+        }
+
+        for(int i=1;i<prices.length;i++){
+            
+            dp[i][0]=Math.max(dp[i-1][0], -prices[i]);   // 买入股票
+            dp[i][1]=Math.max(dp[i-1][1], dp[i-1][0]+prices[i]);   // 出售股票
+            
+            for(int j=2;j<2*k;j+=2){
+                dp[i][j]=Math.max(dp[i-1][j], dp[i-1][j-1]-prices[i]);   // 买入股票
+                dp[i][j+1]=Math.max(dp[i-1][j+1], dp[i-1][j]+prices[i]);   // 出售股票
+            }
+        }
+
+        int max=0;
+        for(int i=1;i<2*k;i+=2){
+            if(dp[prices.length-1][i]>max){
+                max=dp[prices.length-1][i];
+            }
+        }
+        return max;
+    }
+}
+```
+
+
+
+
 
 
 
@@ -5005,7 +5525,24 @@ class Solution {
 }
 ```
 
+## [740. 删除并获得点数](https://leetcode-cn.com/problems/delete-and-earn/)
 
+方法：[如果你理解了《打家劫舍》，这题你肯定会](https://leetcode-cn.com/problems/delete-and-earn/solution/ru-guo-ni-li-jie-liao-da-jia-jie-she-zhe-ti-ni-ken/)
+
+```java
+class Solution {
+    public int deleteAndEarn(int[] nums) {
+        int[] all=new int[10001];
+        for (int num : nums) {
+            ++all[num];
+        }
+        for(int i=2;i<10001;i++){
+            all[i]=Math.max(all[i-1],all[i-2]+all[i]*i);
+        }
+        return all[10000];
+    }
+}
+```
 
 
 
@@ -5750,7 +6287,30 @@ public class Solution {
 }
 ```
 
+## [416. 分割等和子集](https://leetcode-cn.com/problems/partition-equal-subset-sum/)
 
+参考 [92 · 背包问题](https://www.lintcode.com/problem/92) 
+
+```java
+class Solution {
+    public boolean canPartition(int[] nums) {
+        int sum=0;
+        for (int num : nums) {
+            sum+=num;
+        }
+        if(sum%2!=0) return false;
+        int target=sum/2;
+        // dp[i]: 大小为i的背包所能容纳的最大重量
+        int[] dp=new int[target+1];
+        for(int num:nums){
+            for(int i=target;i>=num;i--){
+                dp[i]=Math.max(dp[i],dp[i-num]+num);
+            }
+        }
+        return dp[target]==target;
+    }
+}
+```
 
 
 
@@ -7065,6 +7625,21 @@ class Solution {
 }
 ```
 
+## [268. 丢失的数字](https://leetcode-cn.com/problems/missing-number/)
+
+```java
+class Solution {
+    public int missingNumber(int[] nums) {
+        int sum=0;
+        for(int num:nums){
+            sum+=num;
+        }
+        int total=nums.length*(nums.length+1)/2;
+        return total-sum;
+    }
+}
+```
+
 
 
 
@@ -7635,10 +8210,6 @@ public class LRUCache extends LinkedHashMap<Integer,Integer> {
  * obj.put(key,value);
  */
 ```
-
-
-
-
 
 
 
@@ -9854,6 +10425,138 @@ class Solution {
 }
 ```
 
+## [838. 推多米诺](https://leetcode-cn.com/problems/push-dominoes/)
+
+方法：双指针模拟
+
+```java
+class Solution {
+    public String pushDominoes(String dominoes) {
+        int left=0,right=0;
+        char[] domio = dominoes.toCharArray();
+        while(right<domio.length){
+            if(domio[right]=='.'){
+                ++right;
+                continue;
+            }
+            if(domio[right]=='R'){
+                if(domio[left]=='.'){
+                    left=right;
+                    ++right;
+                }else{
+                    // domio[left]=='R'的情况
+                    while(left<right){
+                        domio[left++]='R';
+                    }
+                    ++right;
+                }
+                continue;
+            }
+            if(domio[right]=='L'){
+                if(domio[left]=='.'){
+                    while(left<right){
+                        domio[left++]='L';
+                    }
+                    ++left;
+                    ++right;
+                }else {
+                    // domio[left]=='R'的情况
+                    int l=left,r=right;
+                    while(l<r){
+                        domio[l++]='R';
+                        domio[r--]='L';
+                    }
+                    left=++right;
+                }
+            }
+        }
+        
+        if(left<domio.length && domio[left]=='R'){
+            while(left<right){
+                domio[left++]='R';
+            }
+        }
+        return String.valueOf(domio);
+    }
+}
+```
+
+## [6. Z 字形变换](https://leetcode-cn.com/problems/zigzag-conversion/)
+
+方法一：模拟法
+
+```java
+class Solution {
+    public String convert(String s, int numRows) {
+        if(numRows==1) return s;
+        char[][] zArr=new char[numRows][s.length()];
+        for(int i=0;i<numRows;i++){
+            Arrays.fill(zArr[i],'*');
+        }
+        char[] chars = s.toCharArray();
+        int i=0,j=0,n=0;
+        while (n<chars.length){
+            if(i==0){
+                while(i<numRows && n<chars.length){
+                    zArr[i++][j]=chars[n++];
+                }
+            }
+            if(n==chars.length) break;
+            i-=2;
+            while(i>0 && n<chars.length){
+                zArr[i--][++j]=chars[n++];
+            }
+            ++j;
+        }
+        
+        StringBuilder sb=new StringBuilder();
+        for(int row=0;row<numRows;row++){
+            for(int col=0;col<=j;col++){
+                if(zArr[row][col]!='*'){
+                    sb.append(zArr[row][col]);
+                }
+            }
+        }
+        
+        return sb.toString();
+    }
+}
+```
+
+## [38. 外观数列](https://leetcode-cn.com/problems/count-and-say/)
+
+方法：模拟法
+
+```java
+class Solution {
+    public String countAndSay(int n) {
+        if(n==1) return "1";
+        StringBuilder sb=new StringBuilder("1");
+        for(int i=2;i<=n;i++){
+            StringBuilder temp=new StringBuilder();
+            int index=0;
+            while(index<sb.length()){
+                char c=sb.charAt(index++);
+                int num=1;
+                while(index<sb.length() && sb.charAt(index)==c){
+                    index++;
+                    num++;
+                }
+                temp.append(num).append(c);
+            }
+            sb=temp;
+        }
+        return sb.toString();
+    }
+}
+```
+
+
+
+
+
+
+
 
 
 
@@ -11029,7 +11732,7 @@ class Solution {
 
 ## [169. 多数元素](https://leetcode-cn.com/problems/majority-element/)
 
-方法：选举法
+方法：[两幅动画演示摩尔投票法，最直观的理解方式](https://leetcode-cn.com/problems/majority-element-ii/solution/liang-fu-dong-hua-yan-shi-mo-er-tou-piao-fa-zui-zh/)
 
 ```java
 class Solution {
@@ -11486,6 +12189,393 @@ class Solution {
     }
 }
 ```
+
+## [6005. 使数组变成交替数组的最少操作数](https://leetcode-cn.com/problems/minimum-operations-to-make-the-array-alternating/)
+
+方法：
+
+1. 先分别统计奇数位和偶数位的数字的出现频次，再分别按其频次进行排序，分别获取最多次数的数字和次多次数的数字
+2. 比较最多次数的两个数字，
+   - 如果不同，则分别保留这两个数字即可
+   - 如果相同，则分别比较`奇数位的最多次数+偶数位的次多次数` 与 `奇数位的次多次数+偶数位的最多次数` ，最大值即为要保留的数字个数。
+
+```java
+class Solution {
+    public int minimumOperations(int[] nums) {
+        if(nums.length<2) return 0;
+
+        Map<Integer,Integer> odds=new HashMap<>();
+        Map<Integer,Integer> evens=new HashMap<>();
+
+        for(int i=0;i<nums.length;i++){
+            if(i%2==0){
+                evens.put(nums[i],evens.getOrDefault(nums[i],0)+1);
+            }else{
+                odds.put(nums[i],odds.getOrDefault(nums[i],0)+1);
+            }
+        }
+        // 按value排序
+        List<Map.Entry<Integer,Integer>> oddList=new ArrayList<>(odds.entrySet());
+        List<Map.Entry<Integer,Integer>> evenList=new ArrayList<>(evens.entrySet());
+        Comparator<Map.Entry<Integer,Integer>> valCmp=new Comparator<Map.Entry<Integer, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Integer, Integer> o1, Map.Entry<Integer, Integer> o2) {
+                return o2.getValue()-o1.getValue();
+            }
+        };
+        Collections.sort(oddList,valCmp);
+        Collections.sort(evenList,valCmp);
+
+        int res=nums.length;
+
+        // 如果两个最多数量的key不相同
+        if(oddList.get(0).getKey()!=evenList.get(0).getKey()){
+            res-=oddList.get(0).getValue();
+            res-=evenList.get(0).getValue();
+        }else{
+            // 两个最多数量的key相同的话,比较两个最大数和次大数的和
+            int saveOdd;
+            int saveEven;
+            if(evenList.size()>1){
+                saveOdd=oddList.get(0).getValue()+evenList.get(1).getValue();
+            }else{
+                saveOdd=oddList.get(0).getValue();
+            }
+            if(oddList.size()>1){
+                saveEven=oddList.get(1).getValue()+evenList.get(0).getValue();
+            }else{
+                saveEven=evenList.get(0).getValue();
+            }
+
+            res-=Math.max(saveEven,saveOdd);
+        }
+
+        return res;
+        
+    }
+}
+```
+
+## [540. 有序数组中的单一元素](https://leetcode-cn.com/problems/single-element-in-a-sorted-array/)
+
+方法一：Set
+
+```java
+class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        Set<Integer> set=new HashSet<>();
+        for (int num : nums) {
+            if(set.contains(num)){
+                set.remove(num);
+            }else{
+                set.add(num);
+            }
+        }
+        int res=0;
+        for (int n : set) {
+            res=n;
+        }
+        return res;
+    }
+}
+```
+
+方法二：二分法，[【宫水三叶】二段性分析运用题](https://leetcode-cn.com/problems/single-element-in-a-sorted-array/solution/gong-shui-san-xie-er-duan-xing-fen-xi-yu-17nv/)
+
+```java
+class Solution {
+    public int singleNonDuplicate(int[] nums) {
+        int left=0,right=nums.length-1;
+        while(left<right){
+            int mid=left+(right-left)/2;
+            if(mid%2==0){
+                if(nums[mid]==nums[mid+1]){
+                    left=mid+1;
+                }else{
+                    right=mid;
+                }
+            }else{
+                if(nums[mid-1]==nums[mid]){
+                    left=mid+1;
+                }else{
+                    right=mid;
+                }
+            }
+        }
+        return nums[left];
+    }
+}
+```
+
+## [128. 最长连续序列](https://leetcode-cn.com/problems/longest-consecutive-sequence/)
+
+寻找数组中连续数字最长长度。
+
+```java
+class Solution {
+    public int longestConsecutive(int[] nums) {
+        Set<Integer> numSet=new HashSet<>();
+        for (int num : nums) {
+            numSet.add(num);
+        }
+        int res=0;
+        for (int num : numSet) {
+            // 确保从起点开始
+            if(!numSet.contains(num-1)){
+                int len=1;
+                while(numSet.contains(++num)){
+                    ++len;
+                }
+                if(len>res){
+                    res=len;
+                }
+            }
+        }
+        return res;
+    }
+}
+```
+
+## [229. 求众数 II](https://leetcode-cn.com/problems/majority-element-ii/)
+
+方法一：HashMap统计元素次数
+
+```java
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        Map<Integer,Integer> numMap=new HashMap<>();
+        for (int num : nums) {
+            numMap.put(num,numMap.getOrDefault(num,0)+1);
+        }
+        
+        int len=nums.length;
+        List<Integer> res=new ArrayList<>();
+        for (int key : numMap.keySet()) {
+            if(numMap.get(key)>len/3){
+                res.add(key);
+            }
+        }
+        return res;
+    }
+}
+```
+
+方法二：方法：[两幅动画演示摩尔投票法，最直观的理解方式](https://leetcode-cn.com/problems/majority-element-ii/solution/liang-fu-dong-hua-yan-shi-mo-er-tou-piao-fa-zui-zh/)
+
+```java
+class Solution {
+    public List<Integer> majorityElement(int[] nums) {
+        // candidate1[0]: 候选数字    candidate1[1]: 票数
+        int[] candidate1=new int[2];
+        int[] candidate2=new int[2];
+        for (int num : nums) {
+            // 先判断两个候选数字中有没有相等的
+            if(candidate1[0]==num){
+                candidate1[1]++;
+            }else if(candidate2[0]==num){
+                candidate2[1]++;
+            }else if(candidate1[1]==0){
+                // 两个候选数字都不相等，就判断两个候选数字中的票数有没有为0的
+                candidate1[0]=num;
+                candidate1[1]=1;
+            }else if(candidate2[1]==0){
+                candidate2[0]=num;
+                candidate2[1]=1;
+            }else{
+                // 两个候选数字都不相等，且两个候选数字中的票数没有为0的
+                candidate1[1]--;
+                candidate2[1]--;
+            }
+        }
+        
+        List<Integer> res=new ArrayList<>();
+        // 计数阶段
+        // 找到了两个候选人之后，需要确定票数是否满足大于 N/3
+        candidate1[1]=0;
+        candidate2[1]=0;
+        for(int num:nums){
+            if(candidate1[0]==num){
+                ++candidate1[1];
+            }else if(candidate2[0]==num){
+                ++candidate2[1];
+            }
+        }
+        if(candidate1[1]>nums.length/3){
+            res.add(candidate1[0]);
+        }
+        if(candidate2[1]>nums.length/3){
+            res.add(candidate2[0]);
+        }
+        
+        return res;
+    }
+}
+```
+
+## [134. 加油站](https://leetcode-cn.com/problems/gas-station/)
+
+方法：[使用图的思想分析该问题](https://leetcode-cn.com/problems/gas-station/solution/shi-yong-tu-de-si-xiang-fen-xi-gai-wen-ti-by-cyayc/)
+
+```java
+class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int min=0,index=0;
+        int[] remainGas=new int[gas.length+1];
+        for(int i=1;i<remainGas.length;i++){
+            int remain=remainGas[i-1]+gas[i-1]-cost[i-1];
+            remainGas[i]=remain;
+            if(remain<min){
+                min=remain;
+                index=i;
+            }
+        }
+        return remainGas[gas.length]>=0? index:-1;
+    }
+}
+```
+
+优化空间：
+
+```java
+class Solution {
+    public int canCompleteCircuit(int[] gas, int[] cost) {
+        int remainGas = 0;
+        int min = Integer.MAX_VALUE;
+        int index = -1;
+        for (int i = 0; i < gas.length; i++) {
+            remainGas += (gas[i] - cost[i]);
+            if (remainGas < min) {
+                min = remainGas;
+                index = i;
+            }
+        }
+        return remainGas >= 0 ? (index + 1) % gas.length : -1;
+    }
+}
+```
+
+## [153. 寻找旋转排序数组中的最小值](https://leetcode-cn.com/problems/find-minimum-in-rotated-sorted-array/)
+
+方法：从后开始看
+
+```java
+class Solution {
+    public int findMin(int[] nums) {
+        int i=nums.length-1;
+        while(i>=1){
+            if(nums[i]>nums[i-1]){
+                --i;
+            }else{
+                break;
+            }
+        }
+        return nums[i];
+    }
+}
+```
+
+## [300. 最长递增子序列](https://leetcode-cn.com/problems/longest-increasing-subsequence/)
+
+方法一：DFS，超时
+
+```java
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int maxLen=0;
+        for(int i=0;i<nums.length;i++){
+            int len=lengthOfLISDFS(nums,i,1);
+            if(len>maxLen){
+                maxLen=len;
+            }
+            // 如果剩下的全部都不够maxLen长，就提前结束
+            if(maxLen>=nums.length-i-1){
+                break;
+            }
+        }
+        return maxLen;
+    }
+    
+    public int lengthOfLISDFS(int[] nums,int start,int len){
+        if(start==nums.length-1){
+            return len;
+        }
+        int maxLen=len;
+        for(int i=start+1; i<nums.length; i++){
+            if(nums[i]>nums[start]){
+                int l=lengthOfLISDFS(nums,i,len+1);
+                if(l>maxLen){
+                    maxLen=l;
+                }
+            }
+        }
+        return maxLen;
+    }
+}
+```
+
+方法二：DP
+
+```java
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        // dp[i]: 以i为结尾的元素的最长递增长度
+        int[] dp=new int[nums.length];
+        dp[0]=1;
+        int maxLen=1;
+        for(int i=1;i<nums.length;i++){
+            dp[i]=1;
+            for(int j=0;j<i;j++){
+                if(nums[i]>nums[j]){
+                    dp[i]=Math.max(dp[i],dp[j]+1);
+                }
+            }
+            if(dp[i]>maxLen){
+                maxLen=dp[i];
+            }
+        }
+        return maxLen;
+    }
+}
+```
+
+## [284. 顶端迭代器](https://leetcode-cn.com/problems/peeking-iterator/)
+
+```java
+// Java Iterator interface reference:
+// https://docs.oracle.com/javase/8/docs/api/java/util/Iterator.html
+
+class PeekingIterator implements Iterator<Integer> {
+
+    Queue<Integer> queue;
+
+    public PeekingIterator(Iterator<Integer> iterator) {
+        // initialize any member here.
+        queue=new LinkedList<>();
+        while(iterator.hasNext()){
+            queue.offer(iterator.next());
+        }
+    }
+    
+    // Returns the next element in the iteration without advancing the iterator.
+    public Integer peek() {
+        return queue.peek();
+    }
+    
+    // hasNext() and next() should behave the same as in the Iterator interface.
+    // Override them if needed.
+    @Override
+    public Integer next() {
+        return queue.poll();
+    }
+
+    @Override
+    public boolean hasNext() {
+        return !queue.isEmpty();
+    }
+}
+```
+
+
 
 
 
@@ -13014,6 +14104,31 @@ class Solution {
     }
 }
 ```
+
+## [260. 只出现一次的数字 III](https://leetcode-cn.com/problems/single-number-iii/)
+
+```java
+class Solution {
+    public int[] singleNumber(int[] nums) {
+        Map<Integer,Integer> map=new HashMap<>();
+        for(int num:nums){
+            map.put(num,map.getOrDefault(num,0)+1);
+        }
+        int[] res=new int[2];
+        int i=0;
+        for (int key : map.keySet()) {
+            if(map.get(key)==1) {
+                res[i++]=key;
+            }
+        }
+        return res;
+    }
+}
+```
+
+
+
+
 
 ## [231. 2 的幂](https://leetcode-cn.com/problems/power-of-two/)
 
@@ -14931,7 +16046,188 @@ class Solution {
 }
 ```
 
+## [1020. 飞地的数量](https://leetcode-cn.com/problems/number-of-enclaves/)
 
+```java
+class Solution {
+    public int numEnclaves(int[][] grid) {
+        int res=0;
+        for(int i=0;i<grid.length;i++){
+            for(int j=0;j<grid[0].length;j++){
+                if(grid[i][j]==0){
+                    continue;
+                }
+                // 碰到陆地时
+                int land=0;   // 统计该陆地的单元数量
+                boolean enclave=false;    // 是否为飞地
+                int[] dx=new int[]{-1,1,0,0};
+                int[] dy=new int[]{0,0,1,-1};
+                Queue<int[]> queue=new LinkedList<>();
+                queue.offer(new int[]{i,j});
+                grid[i][j]=0;
+                while(!queue.isEmpty()){
+                    int[] poll = queue.poll();
+                    ++land;
+                    for(int d=0;d<4;d++){
+                        int newX=poll[0]+dx[d],newY=poll[1]+dy[d];
+                        if(newX>=0 && newX<grid.length && newY>=0 && newY<grid[0].length){
+                            // 未出界
+                            if(grid[newX][newY]==1){
+                                queue.offer(new int[]{newX,newY});
+                                grid[newX][newY]=0;
+                            }
+                        }else{
+                            enclave=true;   // 出界了，是飞地
+                        }
+                    }
+                }
+                if(!enclave) {
+                    res+=land;
+                }
+            }
+        }
+        return res;
+    }
+}
+```
+
+## [419. 甲板上的战舰](https://leetcode-cn.com/problems/battleships-in-a-board/)
+
+```java
+class Solution {
+    public int countBattleships(char[][] board) {
+        int res=0;
+        for(int i=0;i<board.length;i++){
+            for(int j=0;j<board[0].length;j++){
+                if(board[i][j]=='X'){
+                    Queue<int[]> queue=new LinkedList<>();
+                    queue.offer(new int[]{i,j});
+                    board[i][j]='.';
+                    res++;
+                    while(!queue.isEmpty()){
+                        int[] poll=queue.poll();
+                        int[] dx=new int[]{1,0};
+                        int[] dy=new int[]{0,1};
+                        for(int d=0;d<2;d++){
+                            int newX=poll[0]+dx[d],newY=poll[1]+dy[d];
+                            if(newX<board.length && newY<board[0].length){
+                                if(board[newX][newY]=='X'){
+                                    queue.offer(new int[]{newX,newY});
+                                    board[newX][newY]='.';
+                                }
+                            }
+                        }
+                    }
+                }
+
+            }
+        }
+        return res;
+    }
+}
+```
+
+## [79. 单词搜索](https://leetcode-cn.com/problems/word-search/)
+
+方法：DFS，用一个HashSet来标记已读字符
+
+```java
+class Solution {
+    public boolean exist(char[][] board, String word) {
+        return existDFS(board,word,0,-1,-1,new HashSet<>());
+    }
+
+    public boolean existDFS(char[][] board, String word, int len, int x, int y, Set<String> read){
+        if(len==word.length()){
+            return true;
+        }
+
+        boolean res=false;
+        if(x==-1){
+            // 第一个点，全局搜索
+            for(int i=0;i<board.length;i++){
+                for(int j=0;j<board[0].length;j++){
+                    // 每找到一个点，就进入下一个字符进行搜索
+                    if(board[i][j]==word.charAt(len)){
+                        String locate=i+""+j;
+                        read.add(locate);
+                        res=existDFS(board,word,len+1,i,j,read);
+                        // 如果全部找到了，就提前结束搜索
+                        if(res) return res;
+                        read.remove(locate);
+                    }
+                }
+            }
+        }else{
+            // 非第一个点，周围搜索
+            int[] dx=new int[]{-1,1,0,0};
+            int[] dy=new int[]{0,0,1,-1};
+            for(int i=0;i<4;i++){
+                int newX=x+dx[i],newY=y+dy[i];
+                if(newX>=0 && newX<board.length && newY>=0 && newY<board[0].length){
+                    String locate=newX+""+newY;
+                    if(!read.contains(locate) && board[newX][newY]==word.charAt(len)){
+                        read.add(locate);
+                        res=existDFS(board,word,len+1,newX,newY,read);
+                        // 如果全部找到了，就提前结束搜索
+                        if(res) return res;
+                        read.remove(locate);
+                        
+                    }
+                }
+            }
+        }
+        return res;
+    }
+}
+```
+
+优化：在原数组中标记已读
+
+```java
+class Solution {
+    public boolean exist(char[][] board, String word) {
+        return existDFS(board,word,0,-1,-1);
+    }
+
+    public boolean existDFS(char[][] board, String word, int len, int x, int y){
+        if(len==word.length()){
+            return true;
+        }
+        if(x==-1){
+            // 第一个点，全局搜索
+            for(int i=0;i<board.length;i++){
+                for(int j=0;j<board[0].length;j++){
+                    // 每找到一个点，就进入下一个字符进行搜索
+                    if(board[i][j]==word.charAt(len)){
+                        board[i][j]='.';
+                        // 如果全部找到了，就提前结束搜索
+                        if(existDFS(board,word,len+1,i,j)) return true;
+                        board[i][j]=word.charAt(len);
+                    }
+                }
+            }
+        }else{
+            // 非第一个点，周围搜索
+            int[] dx=new int[]{-1,1,0,0};
+            int[] dy=new int[]{0,0,1,-1};
+            for(int i=0;i<4;i++){
+                int newX=x+dx[i],newY=y+dy[i];
+                if(newX>=0 && newX<board.length && newY>=0 && newY<board[0].length){
+                    if(board[newX][newY]==word.charAt(len)){
+                        board[newX][newY]='.';
+                        // 如果全部找到了，就提前结束搜索
+                        if(existDFS(board,word,len+1,newX,newY)) return true;
+                        board[newX][newY]=word.charAt(len);
+
+                    }
+                }
+            }
+        }
+        return false;
+    }
+}
+```
 
 
 
@@ -17502,5 +18798,408 @@ class Solution {
 
 
 
+# 有序集合
 
+## [729. 我的日程安排表 I](https://leetcode-cn.com/problems/my-calendar-i/)
+
+方法一：暴力法
+
+```java
+class MyCalendar {
+
+    List<int[]> calendar;
+
+    public MyCalendar() {
+        calendar=new ArrayList<>();
+    }
+    
+    public boolean book(int start, int end) {
+        for(int[] cal:calendar){
+            if (!(end<=cal[0] || start>=cal[1])) return false;
+        }
+        calendar.add(new int[]{start,end});
+        return true;
+
+    }
+}
+
+/**
+ * Your MyCalendar object will be instantiated and called as such:
+ * MyCalendar obj = new MyCalendar();
+ * boolean param_1 = obj.book(start,end);
+ */
+```
+
+方法二：对开始时间进行排序，使用TreeMap
+
+```java
+class MyCalendar {
+
+    TreeMap<Integer,Integer> map;
+
+    MyCalendar(){
+        map=new TreeMap<>();
+    }
+
+    public boolean book(int start, int end) {
+        // 获取最接近start，且小于等于start的元素
+        Integer prev=map.floorKey(start);
+        // 获取最接近start，且大于等于start的元素
+        Integer back= map.ceilingKey(start);
+        if((prev==null || map.get(prev)<=start) && (back==null || back>=end)){
+            map.put(start,end);
+            return true;
+        }
+        return false;
+    }
+}
+
+/**
+ * Your MyCalendar object will be instantiated and called as such:
+ * MyCalendar obj = new MyCalendar();
+ * boolean param_1 = obj.book(start,end);
+ */
+```
+
+## [731. 我的日程安排表 II](https://leetcode-cn.com/problems/my-calendar-ii/)
+
+```java
+class MyCalendarTwo {
+
+    // key: 时间    value: 日程数
+    TreeMap<Integer,Integer> calendar;
+
+    MyCalendarTwo(){
+        calendar=new TreeMap<>();
+    }
+
+    public boolean book(int start, int end) {
+        // 按时间线排序，并将日程添加到时间线上
+        // 开始时，日程数加一，结束时，日程数减一
+        calendar.put(start,calendar.getOrDefault(start,0)+1);
+        calendar.put(end,calendar.getOrDefault(end,0)-1);
+
+        // 日程数
+        int active=0;
+        for (int val : calendar.values()) {
+            // 以时间线统计日程数
+            active+=val;
+            
+            // 日程数>=3时，返回 false
+            if(active>=3){
+                // 恢复现场
+                calendar.put(start,calendar.get(start)-1);
+                calendar.put(end,calendar.get(end)+1);
+
+                // 减少calendar空间
+                if(calendar.get(start)==0){
+                    calendar.remove(start);
+                }
+                if(calendar.get(end)==0){
+                    calendar.remove(end);
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
+
+/**
+ * Your MyCalendarTwo object will be instantiated and called as such:
+ * MyCalendarTwo obj = new MyCalendarTwo();
+ * boolean param_1 = obj.book(start,end);
+ */
+```
+
+## [2034. 股票价格波动](https://leetcode-cn.com/problems/stock-price-fluctuation/)
+
+```java
+class StockPrice {
+
+    // 当前的时间
+    int curTime;
+    // key: 时间    value: 价格
+    HashMap<Integer,Integer> timePriceMap;
+    // key: 价格   value: 数量
+    TreeMap<Integer,Integer> prices;
+
+    public StockPrice() {
+        curTime=0;
+        timePriceMap=new HashMap<>();
+        prices=new TreeMap<>();
+    }
+
+    public void update(int timestamp, int price) {
+        // 更新curTime
+        if(timestamp>curTime){
+            curTime=timestamp;
+        }
+        // 获取以前这个时间的价格
+        int prevPrice=timePriceMap.getOrDefault(timestamp,0);
+        // 更新以前这个时间的价格
+        timePriceMap.put(timestamp,price);
+        // 更新以前价格的数量
+        // prevPrice!=0 说明这个价格以前存在
+        if(prevPrice!=0){
+            prices.put(prevPrice,prices.get(prevPrice)-1);
+            if(prices.get(prevPrice)==0){
+                prices.remove(prevPrice);
+            }
+        }
+        // 更新当前价格的数量
+        prices.put(price,prices.getOrDefault(price,0)+1);
+    }
+
+    public int current() {
+        return timePriceMap.get(curTime);
+    }
+
+    public int maximum() {
+        return prices.lastKey();
+    }
+
+    public int minimum() {
+        return prices.firstKey();
+    }
+}
+
+/**
+ * Your StockPrice object will be instantiated and called as such:
+ * StockPrice obj = new StockPrice();
+ * obj.update(timestamp,price);
+ * int param_2 = obj.current();
+ * int param_3 = obj.maximum();
+ * int param_4 = obj.minimum();
+ */
+```
+
+
+
+# 字典树
+
+## [208. 实现 Trie (前缀树)](https://leetcode-cn.com/problems/implement-trie-prefix-tree/)
+
+方法一：两个HashSet
+
+```java
+class Trie {
+
+    private Set<String> wordSet;     //存储word
+    private Set<String> prefixSet;   //存储word的前缀
+    
+    public Trie() {
+        wordSet=new HashSet<>();
+        prefixSet=new HashSet<>();
+    }
+
+    public void insert(String word) {
+        wordSet.add(word);
+        StringBuilder sb=new StringBuilder(word);
+        while(sb.length()>0){
+            prefixSet.add(sb.toString());
+            sb.deleteCharAt(sb.length()-1);
+        }
+    }
+
+    public boolean search(String word) {
+        return wordSet.contains(word);
+    }
+
+    public boolean startsWith(String prefix) {
+        return prefixSet.contains(prefix);
+    }
+}
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
+```
+
+方法二：前缀树，[实现 Trie (前缀树) | 字典树 | 代码简洁易懂 【C++/Java版本】](https://leetcode-cn.com/problems/implement-trie-prefix-tree/solution/shi-xian-trie-qian-zhui-shu-zi-dian-shu-hzi84/)
+
+```java
+class Trie {
+
+    private Node root;
+
+    public Trie() {
+        root=new Node();
+    }
+
+    public void insert(String word) {
+        Node p=root;
+        for(int i=0;i<word.length();i++){
+            int w=word.charAt(i)-'a';
+            if(p.son[w]==null){
+                p.son[w]=new Node();
+            }
+            p=p.son[w];
+        }
+        p.isEnd=true;
+    }
+
+    public boolean search(String word) {
+        Node p=root;
+        for(int i=0;i<word.length();i++){
+            int w=word.charAt(i)-'a';
+            if(p.son[w]==null) return false;
+            p=p.son[w];
+        }
+        return p.isEnd;
+    }
+
+    public boolean startsWith(String prefix) {
+        Node p=root;
+        for(int i=0;i<prefix.length();i++){
+            int w=prefix.charAt(i)-'a';
+            if(p.son[w]==null) return false;
+            p=p.son[w];
+        }
+        return true;
+    }
+}
+
+class Node{
+    boolean isEnd;   // 表示是否存在以这个点为结尾的单词
+    Node[] son;   // 26个小写字母子结点
+
+    public Node(){
+        isEnd=false;
+        son=new Node[26];
+    }
+}
+
+/**
+ * Your Trie object will be instantiated and called as such:
+ * Trie obj = new Trie();
+ * obj.insert(word);
+ * boolean param_2 = obj.search(word);
+ * boolean param_3 = obj.startsWith(prefix);
+ */
+```
+
+## [211. 添加与搜索单词 - 数据结构设计](https://leetcode-cn.com/problems/design-add-and-search-words-data-structure/)
+
+方法：前缀树+DFS ，类比 [208. 实现 Trie (前缀树)](https://leetcode-cn.com/problems/implement-trie-prefix-tree/)
+
+```java
+class WordDictionary {
+
+    private Node root;
+
+    public WordDictionary() {
+        root=new Node();
+    }
+    
+    public void addWord(String word) {
+        Node p=root;
+        for(int i=0;i<word.length();i++){
+            int w=word.charAt(i)-'a';
+            if(p.son[w]==null) p.son[w]=new Node();
+            p=p.son[w];
+        }
+        p.isEnd=true;
+    }
+    
+    public boolean search(String word) {
+        return searchHelper(word,0,root);
+    }
+
+    public boolean searchHelper(String word,int from,Node p){
+        for(int i=from;i<word.length();i++){
+            int w=word.charAt(i)-'a';   // 对于 '.' , w=-51
+            if(w>=0){
+                if(p.son[w]==null) return false;
+                p=p.son[w];
+            }else{
+                // DFS
+                for(int j=0;j<26;j++){
+                    if(p.son[j]!=null){
+                        if(searchHelper(word,i+1, p.son[j])) return true;
+                    }
+                }
+                return false;
+            }
+        }
+        return p.isEnd;
+    }
+}
+
+class Node{
+    boolean isEnd;
+    Node[] son;
+
+    public Node(){
+        isEnd=false;
+        son=new Node[26];
+    }
+}
+
+/**
+ * Your WordDictionary object will be instantiated and called as such:
+ * WordDictionary obj = new WordDictionary();
+ * obj.addWord(word);
+ * boolean param_2 = obj.search(word);
+ */
+```
+
+## [139. 单词拆分](https://leetcode-cn.com/problems/word-break/)
+
+方法一：构造字典树+DFS
+
+```java
+class Solution {
+    public boolean wordBreak(String s, List<String> wordDict) {
+        WordTrie trie=new WordTrie(wordDict);
+        return searchWordHelper(trie,s,0);
+    }
+
+    public boolean searchWordHelper(WordTrie trie, String s, int from){
+        WordNode p=trie.root;
+        for(int i=from;i<s.length();i++){
+            int w=s.charAt(i)-'a';
+            if(p.son[w]==null) return false;
+            p=p.son[w];
+            if(p.isEnd){
+                if(searchWordHelper(trie,s,i+1)) return true;
+            }
+        }
+        return p.isEnd;
+    }
+}
+
+class WordNode{
+    boolean isEnd;
+    WordNode[] son;
+
+    WordNode(){
+        isEnd=false;
+        son=new WordNode[26];
+    }
+}
+
+class WordTrie{
+    WordNode root;
+
+    WordTrie(List<String> wordDict){
+        root=new WordNode();
+        for (String word : wordDict) {
+            WordNode p=root;
+            for(int i=0;i<word.length();i++){
+                int w=word.charAt(i)-'a';
+                if(p.son[w]==null) p.son[w]=new WordNode();
+                p=p.son[w];
+            }
+            p.isEnd=true;
+        }
+    }
+}
+```
 

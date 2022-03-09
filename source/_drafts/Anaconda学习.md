@@ -177,6 +177,27 @@ Anaconda，就是一个Python环境的管理工具，通过它，可以切换多
     pip freeze > requirements.txt
     ```
 
+11. 查看conda版本信息
+
+    ```bash
+    conda --version
+    
+    C:\Users\哈啰>conda --version
+    conda 4.10.1
+    ```
+
+12. 查看cuda版本
+
+    ```bash
+    nvcc --version
+    
+    C:\Users\哈啰>nvcc --version
+    nvcc: NVIDIA (R) Cuda compiler driver
+    Copyright (c) 2005-2019 NVIDIA Corporation
+    Built on Fri_Feb__8_19:08:26_Pacific_Standard_Time_2019
+    Cuda compilation tools, release 10.1, V10.1.105
+    ```
+
     
 
 
